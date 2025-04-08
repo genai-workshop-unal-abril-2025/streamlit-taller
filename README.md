@@ -150,7 +150,7 @@ Una vez se han guardado estos cambios en el archivo _hola_mundo.py_ se puede ir 
 
 Al entrar se deberia seguir viendo unicamente el mensaje _Hola Mundo_, esto debido a que en el navegador no se han aplicado los cambios realizados en el archivo _hola_mundo.py_.
 
-Para que los ultimos cambios se vean reflejados en el navegador se debe poner el cursos sobre el logo _i_ que aparece en la esquina superior izqueirda de la pantalla y luego dar click al boton _Re-Run_:
+Para que los ultimos cambios se vean reflejados en el navegador se debe poner el cursor sobre el logo _i_ que aparece en la esquina superior derecha de la pantalla y luego dar click al boton _Re-Run_:
 
 https://github.com/user-attachments/assets/3c6c8a82-aa81-4837-b97a-b40cf16dea6d
 
