@@ -7,7 +7,7 @@ Este taller tiene como objetivo crear una aplicación de Streamlit en donde se p
 - (Opcional pero muy recomendable) Tener instalado Visual Studio Code.
 
 
-## Paso 0: Preparación.
+## Paso 0: Preparación e Instalación de Streamlit.
 
 ### Paso 0.1: Crear una carpeta para almacenar el código de la aplicación.
 
@@ -154,7 +154,7 @@ Para que los ultimos cambios se vean reflejados en el navegador se debe poner el
 
 https://github.com/user-attachments/assets/3c6c8a82-aa81-4837-b97a-b40cf16dea6d
 
-Tras esto, ahora aparece el botón _Saludar_ en la pantalla de la aplicación y al oprimirlo se muestra el mensaje _Hola Mundo_:
+Tras esto, en el navegador se ven los ultimos cambios realizados en la aplicación y ahora aparece el botón _Saludar_ en la pantalla. Cuando se orpimer el boton se muestra el mensaje _Hola Mundo_:
 
 https://github.com/user-attachments/assets/79f6f154-012d-4daa-966b-42e6cb7f01a1
 
