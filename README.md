@@ -148,21 +148,45 @@ El botón creado se ha asignado a la variable _boton_saludar_. La variable _boto
 
 Una vez se han guardado estos cambios en el archivo _hola_mundo.py_ se puede ir nuevamente a la dirección http://localhost:8501 en el navegador.
 
-Al entrar se deberia seguir viendo unicamente el mensaje _Hola Mundo_, esto debido a que en el navegador no se han aplicado los cambios realizados en el archivo _hola_mundo.py_.
+Al entrar se deberia seguir viendo unicamente el mensaje _Hola Mundo_, esto ocurre debido a que el navegador aún no ha vuelto a ejecutar la aplicación con los ultimos los cambios realizados en el archivo _hola_mundo.py_.
 
-Para que los ultimos cambios se vean reflejados en el navegador se debe poner el cursor sobre el logo _i_ que aparece en la esquina superior derecha de la pantalla y luego dar click al boton _Re-Run_:
+Para que el navegador vuelva a ejecutar la aplicación y refleje los ultimos cambios del código se tienen dos opciones:
+
+1. Oprimir la tecla R dentro del navegador.
+
+2. Ubicar el cursor sobre el logo _i_ que aparece en la esquina superior derecha de la pantalla y luego dar click al boton _Rerun_:
 
 https://github.com/user-attachments/assets/3c6c8a82-aa81-4837-b97a-b40cf16dea6d
 
-Tras esto, en el navegador se ven los ultimos cambios realizados en la aplicación y ahora aparece el botón _Saludar_ en la pantalla. Cuando se orpimer el boton se muestra el mensaje _Hola Mundo_:
+Tras esto, en el navegador se ven los ultimos cambios realizados en la aplicación y ahora aparece el botón _Saludar_ en la pantalla. Cuando se oprime el boton se muestra el mensaje _Hola Mundo_:
 
 https://github.com/user-attachments/assets/79f6f154-012d-4daa-966b-42e6cb7f01a1
 
 ### Paso 2.2: Agregar un campo de texto para escribir un nombre
 
+Ahora vamos a modificar el código de la aplicación para que se pueda recibir el nombre del usuario y se puede escribir un mensaje saludandolo tras oprimir un boton.
 
+Para esto debemos modificar el código dentro del archivo _hola_mundo.py_ para que se vea de la siguiente manera:
 
+```python
+import streamlit as st
 
+nombre_usuario = st.text_input("Escribe tu nombre")
+
+boton_saludar = st.button("Saludar")
+
+if boton_saludar:
+    #Esta parte del código se ejecuta cuando se presiona el boton
+    st.write(f"Hola {nombre_usuario}")
+```
+
+En este caso se ha agregado un elemento de tipo [st.text_input()](https://docs.streamlit.io/develop/api-reference/widgets/st.text_input) al inicio de la aplicación. Este elemento dibuja una caja de texto donde el usuario puede escribir. El primer argumento del st.text_input() corresponde al mensaje que se quiere mostrar en pantalla sobre la caja de texto.
+
+La variable _nombre_usuario_ va a almacenar el texto que se escriba en la caja de texto dibujada por el elemento st.text_input. 
+
+Por otra parte, ahora el mensaje que se escribe en pantalla con st.write va a incluir el _nombre_usuario_ que se haya escrito en la caja de texto.
+
+Para visualizar todos estos elementos se deben guardar los cambios del archivo _hola_mundo.py_ y se debe ir al navegador. Tras dar click al boton _Rerun_ se deberia ver la siguiente interfaz:
 
 
 
