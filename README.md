@@ -215,11 +215,228 @@ La idea de esta primera parte del taller era familiarizarse con la forma en que 
 
 ## Paso 3: Crear un Mini Prompt Lab
 
+En esta sección del taller se busca crear una versión reducida de la sección Freeform del Prompt Lab de WatsonX que se vio en la sesión teorica del jueves.
+
+![FotoPromptLab](./MultimediaREADME/Paso3/PantallazoInicioPromptLab.png)
+
+Dentro de esta aplicación se podrá llamar a un modelo generativo alojado en la plataforma WatsonX utilizando los parametros que prefiera el usuario.
+
 ### Paso 3.1: Eliminar el archivo _hola_mundo.py_
 
 ### Paso 3.2: Crear un nuevo archivo llamado _mini_prompt_lab.py_.
 
-Tras e
+Tras realizar estos cambios, la carpeta del proyecto deberia verse de la siguiente forma.
+
+![FotoSoloMiniPromptLab](./MultimediaREADME/Paso3/SoloMiniPromptLab.png)
+
+### Paso 3.3: Agregar un titulo a la aplicación.
+
+En Streamlit se puede usar el elemento [st.title()](https://docs.streamlit.io/develop/api-reference/text/st.title) para mostrar un texto con formato de titulo dentro de la aplicación.
+
+Para incluir un titulo en el Mini Prompt Lab se debe escribir el siguiente código en el archivo _mini_prompt_lab.py_
+
+```python
+import streamlit as st
+
+st.title("Mini Prompt Lab")
+```
+
+Para ejecutar la aplicación se debe ejecutar el siguiente comando en la terminal.
+
+```console
+streamlit run mini_prompt_lab.py
+```
+
+Tras ejecutar la aplicación en el navegador deberia verse lo siguiente.
+
+![FotoSoloTituloApp](./MultimediaREADME/Paso3/SoloTituloApp.png)
+
+### Paso 3.4: Agregar un menu para elegir el modelo.
+
+Para agrear un menu en el cual se pueda elegir uno de los modelos disponibles en WatsonX se puede utilizar un elemento [st.selectbox()](https://docs.streamlit.io/develop/api-reference/widgets/st.selectbox). Este elemento crea un menu tipo dropdown en el cual se puede elegir entre una lista de opciones.
+
+Para incluir este menu en la aplicación se debe modificar el código en _mini_prompt_lab.py_ de la siguiente manera:
+
+```python
+import streamlit as st
+
+st.title("Mini Prompt Lab")
+
+modelo_seleccionado = st.selectbox("Elige el modelo que quieres utilizar", ["ibm/granite-3-2-8b-instruct","mistralai/mistral-large", "meta-llama/llama-3-3-70b-instruct", "meta-llama/llama-4-scout-17b-16e-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"])
+```
+
+La variable _modelo_seleccionado_ va a almacenar el modelo que elija el usuario desde la interfaz grafica. En este caso en el st.selectbox se incluyen 5 modelos a elegir para el usuario (Granite 3.2 8b, Mistral Large, Llama 3.3 70b, Llama 4 Scout, Llama 4 Maverick).
+
+Si se ingresa nuevamente a la aplicación en el navegador, ahora debe haber un menu donde se puede elegir el modelo:
+
+![MenuCreado](./MultimediaREADME/Paso3/MenuCreado.png)
+
+### Paso 3.5: Agregar espacios para indicar la cantidad mínima y máxima de tokens de respuesta.
+
+Streamlit permite al usuario ingresar números por medio del elemento [st.number_input()](https://docs.streamlit.io/develop/api-reference/widgets/st.number_input).
+
+Para que el usuario un st.number_input() para que el usuario pueda indicar la cantidad mínima de tokens y otro para que pueda indicar la cantiadad máxima de tokens que espera de respuesta. 
+
+Para esto se debe modificar el código escrito en _mini_prompt_lab.py_ de la siguiente forma.
+
+```python
+import streamlit as st
+
+st.title("Mini Prompt Lab")
+
+modelo_seleccionado = st.selectbox("Elige el modelo que quieres utilizar", ["ibm/granite-3-2-8b-instruct","mistralai/mistral-large", "meta-llama/llama-3-3-70b-instruct", "meta-llama/llama-4-scout-17b-16e-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"])
+
+min_tokens_seleccionados = st.number_input("Tokens de respuesta mínimos", min_value=0)
+
+max_tokens_seleccionados = st.number_input("Tokens de respuesta máximos", min_value=0, value=200)
+```
+
+Las variables _min_tokens_seleccionados_ y _max_tokens_seleccionados_ almacenarán el número que ingrese el usuario en sus respectivos st.number_input().
+
+Tras estos cambios, la aplicación en el navegador debe verse de la siguiente forma:
+
+![MenuCreado](./MultimediaREADME/Paso3/MinMaxTokens.png)
+
+### Paso 3.6: Agregar un menu para seleccionar el modo de decodificación
+
+Para que en la aplicación el usuario peuda seleccionar entre utilizar el modo de decodificación "Greedy" o "Sampling" se puede utilizar un menu del tipo [st.radio()](https://docs.streamlit.io/develop/api-reference/widgets/st.radio). Este menu permite al usuario elegir una entre varias opciones.
+
+El código en el archivo _mini_prompt_lab.py_ se debe modificar de la siguiente manera para incluir un menu que permita seleccionar el modo de decodificación:
+
+```python
+import streamlit as st
+
+st.title("Mini Prompt Lab")
+
+modelo_seleccionado = st.selectbox("Elige el modelo que quieres utilizar", ["ibm/granite-3-2-8b-instruct","mistralai/mistral-large", "meta-llama/llama-3-3-70b-instruct", "meta-llama/llama-4-scout-17b-16e-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"])
+
+min_tokens_seleccionados = st.number_input("Tokens de respuesta mínimos", min_value=0)
+
+max_tokens_seleccionados = st.number_input("Tokens de respuesta máximos", min_value=0, value=200)
+
+modo_seleccionado = st.radio("Elige un modo de decodificación", ["Greedy", "Sampling"])
+```
+
+Tras este cambio, la aplicación en el navegador debe verse de la siguiente forma:
+
+![MenuModo](./MultimediaREADME/Paso3/SeleccionModo.png)
+
+### Paso 3.7: Agregar los parametros para el modo Sampling.
+
+Cuando se selecciona el modo Sampling en el Prompt Lab se permite al usuario configurar parametros adicionales cómo lo son la temperatura, el top p, el top k y la random seed para la generación del texto:
+
+![MenuPromptLabSampling](./MultimediaREADME/Paso3/MenuPromptLabSampling.png)
+
+En la aplicación se van a agregar elementos del tipo [st.slider()](https://docs.streamlit.io/develop/api-reference/widgets/st.slider) para que el usuario pueda seleccionar la temperatura, top p  y top k cuando tenga seleccionado el modo "Sampling". Además se va a agregar un st.number_input() para que indique la random seed a utilizar.
+
+Para incluir esta lógica en la aplicación, se debe modificar el archivo _mini_prompt_lab.py_ para que quede de la siguiente forma:
+
+```python
+import streamlit as st
+
+st.title("Mini Prompt Lab")
+
+modelo_seleccionado = st.selectbox("Elige el modelo que quieres utilizar", ["ibm/granite-3-2-8b-instruct","mistralai/mistral-large", "meta-llama/llama-3-3-70b-instruct", "meta-llama/llama-4-scout-17b-16e-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"])
+
+min_tokens_seleccionados = st.number_input("Tokens de respuesta mínimos", min_value=0)
+
+max_tokens_seleccionados = st.number_input("Tokens de respuesta máximos", min_value=0, value=200)
+
+modo_seleccionado = st.radio("Elige un modo de decodificación", ["Greedy", "Sampling"])
+
+if modo_seleccionado == "Sampling":
+    temperature_seleccionada = st.slider("Temperature", min_value=0.00, max_value=2.00, value=0.7, step=0.01)
+    top_p_seleccionado = st.slider("Top P", min_value=0.01, max_value=1.00, value=1.00, step=0.01)
+    top_n_seleccionado = st.slider("Top K", min_value=1, max_value=100, value=50, step=1)
+    random_seed_seleccionada = st.number_input("Random seed", min_value=1)
+```
+
+Los elementos de tipo st.slider() retornan el valor que el usuario haya seleccionado desde la interfaz.
+
+Tras guardar los cambios realizados, en el navegador al seleccionar la opción "Sampling" deberian salir los siguientes elementos:
+
+![ParametrosSampling](./MultimediaREADME/Paso3/ParametrosSampling.png)
+
+### Paso 3.8: Agregar un slider para el parametro Repetition Penalty
+
+Al final del código se va a agregar otro st.slider() con el cual se pueda seleccionar el valor de repetition penalty tanto cuando se selecciona el modo "Greedy" cómo cuando se selecciona el modo "Sampling".
+
+Para ello se debe modificar el código de _mini_prompt_lab.py_ de la siguiente forma:
+
+```python
+import streamlit as st
+
+st.title("Mini Prompt Lab")
+
+modelo_seleccionado = st.selectbox("Elige el modelo que quieres utilizar", ["ibm/granite-3-2-8b-instruct","mistralai/mistral-large", "meta-llama/llama-3-3-70b-instruct", "meta-llama/llama-4-scout-17b-16e-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"])
+
+min_tokens_seleccionados = st.number_input("Tokens de respuesta mínimos", min_value=0)
+
+max_tokens_seleccionados = st.number_input("Tokens de respuesta máximos", min_value=0, value=200)
+
+modo_seleccionado = st.radio("Elige un modo de decodificación", ["Greedy", "Sampling"])
+
+if modo_seleccionado == "Sampling":
+    temperature_seleccionada = st.slider("Temperature", min_value=0.00, max_value=2.00, value=0.7, step=0.01)
+    top_p_seleccionado = st.slider("Top P", min_value=0.01, max_value=1.00, value=1.00, step=0.01)
+    top_n_seleccionado = st.slider("Top K", min_value=1, max_value=100, value=50, step=1)
+    random_seed_seleccionada = st.number_input("Random seed", min_value=1)
+
+repetition_penalty_seleccionada = st.slider("Repetition Penalty", min_value=1.00, max_value=2.00, value=1.00, step=0.01)
+```
+
+Tras agregar este elemento, en la parte de abajo de la aplicación deberia salir un slider para seleccionar el valor de repetition penalty:
+
+![RepetitionPenalty](./MultimediaREADME/Paso3/RepetitionPenalty.png)
+
+### Paso 3.9: Agregar un espacio para el prompt y un boton para llamar al modelo.
+
+Para agregar un espacio donde el usuario pueda escribir el prompt se va a utilizar un elemento del tipo [st.text_area()](https://docs.streamlit.io/develop/api-reference/widgets/st.text_area). Además, se va a agregar al final un botón con el cual llamar al modelo con el prompt y los parametros seleccionados.
+
+Para esto se debe modificar el código del archivo _mini_prompt_lab.py_ para que quede de la siguiente forma:
+
+```python
+import streamlit as st
+
+st.title("Mini Prompt Lab")
+
+modelo_seleccionado = st.selectbox("Elige el modelo que quieres utilizar", ["ibm/granite-3-2-8b-instruct","mistralai/mistral-large", "meta-llama/llama-3-3-70b-instruct", "meta-llama/llama-4-scout-17b-16e-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"])
+
+min_tokens_seleccionados = st.number_input("Tokens de respuesta mínimos", min_value=0)
+
+max_tokens_seleccionados = st.number_input("Tokens de respuesta máximos", min_value=0, value=200)
+
+modo_seleccionado = st.radio("Elige un modo de decodificación", ["Greedy", "Sampling"])
+
+if modo_seleccionado == "Sampling":
+    temperature_seleccionada = st.slider("Temperature", min_value=0.00, max_value=2.00, value=0.7, step=0.01)
+    top_p_seleccionado = st.slider("Top P", min_value=0.01, max_value=1.00, value=1.00, step=0.01)
+    top_n_seleccionado = st.slider("Top K", min_value=1, max_value=100, value=50, step=1)
+    random_seed_seleccionada = st.number_input("Random seed", min_value=1)
+
+repetition_penalty_seleccionada = st.slider("Repetition Penalty", min_value=1.00, max_value=2.00, value=1.00, step=0.01)
+
+prompt_del_usuario = st.text_area("Prompt", placeholder="Escribe aquí tu prompt")
+
+boton_llamar_modelo = st.button("Llamar al modelo")
+```
+
+La variable _prompt_del_usuario_ va a almacenar el texto que el usuario escriba en el area de texto que se muestra en la aplicación.
+
+Tras estos cambios, en la parte de abajo de la aplicación deberian verse los siguientes elementos:
+
+![PromptYBoton](./MultimediaREADME/Paso3/PromptYBoton.png)
+
+Hasta el momento se ha adelantado la mayor parte de la interfaz del Mini Prompt Lab. A continuación se va a escribir el código que va permitir llamar los modelos alojados en WatsonX.
+
+### Paso 3.10: Instalar una libreria para llamar a WatsonX
+
+
+
+
+
+
+
 
 
 
