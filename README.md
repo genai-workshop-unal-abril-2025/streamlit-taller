@@ -152,11 +152,11 @@ Al entrar se deberia seguir viendo unicamente el mensaje _Hola Mundo_, esto debi
 
 Para que los ultimos cambios se vean reflejados en el navegador se debe poner el cursos sobre el logo _i_ que aparece en la esquina superior izqueirda de la pantalla y luego dar click al boton _Re-Run_:
 
-<video controls src="./MultimediaREADME/Paso2/ReRunAplicacion.mp4" title="Video Re-Run"></video>
+https://github.com/user-attachments/assets/3c6c8a82-aa81-4837-b97a-b40cf16dea6d
 
 Tras esto, ahora aparece el botón _Saludar_ en la pantalla de la aplicación y al oprimirlo se muestra el mensaje _Hola Mundo_:
 
-<video controls src="MultimediaREADME/Paso2/BotonSaludarBasico.mp4" title="Boton Saludar Basico"></video>
+https://github.com/user-attachments/assets/79f6f154-012d-4daa-966b-42e6cb7f01a1
 
 ### Paso 2.2: Agregar un campo de texto para escribir un nombre
 
