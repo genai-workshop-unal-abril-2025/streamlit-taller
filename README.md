@@ -705,7 +705,7 @@ En este caso por medio de las instrucciones
         st.write(respuesta_generada)
 ```
 
-Se esta creando un contenedor de tipo st.expander, y dentro de este contenedor se esta escribiendo la respuesta generada. Las instrucciones que se ejecutan dentro de la sentencia _with_ se vana dibujar dentro del contenedor seleccionado.
+Se esta creando un contenedor de tipo st.expander, y dentro de este contenedor se esta escribiendo la respuesta generada. Las instrucciones que se ejecutan dentro de la sentencia _with_ se van a dibujar dentro del contenedor.
 
 Para tener una mayor claridad, se va a ejecutar la aplicación y se vera su funcionamiento.
 
@@ -719,6 +719,7 @@ streamlit run mini_prompt_lab.py
 
 Una vez se ejecuta, desde el navegador se puede utilizar la aplicación para realizar un prompt a un LLM:
 
+https://github.com/user-attachments/assets/efe11826-e66c-48f5-8bbf-3fd670cb6179
 
 
 
