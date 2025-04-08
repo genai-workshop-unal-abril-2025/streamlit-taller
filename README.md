@@ -883,7 +883,10 @@ Las lineas incluidas al final se encargan de:
 3. Cuando el boton se oprime, se llama a la función _call_watsonx_vision_model_ con los parametros dados por el usuario. Esta función retorna el texto generado por el modelo
 4. Finalmente, muestra la respuesta generada dentro de un contendor st.expander().
 
-UNa vez se guardan estos cambios y se va al navegador se puede probar la aplicación completa:
+Una vez se guardan estos cambios y se va al navegador se puede probar la aplicación completa:
+
+https://github.com/user-attachments/assets/9320319f-161e-4448-89e6-1d0242a1251a
+
 
 
 
