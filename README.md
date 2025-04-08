@@ -887,35 +887,300 @@ Una vez se guardan estos cambios y se va al navegador se puede probar la aplicac
 
 https://github.com/user-attachments/assets/9320319f-161e-4448-89e6-1d0242a1251a
 
+### Paso 4.7: Conclusion
+
+Se ha construido una aplicación que permite llamar modelos multimodales alojados en WatsonX.
+
+## Paso 5: Crear una aplicación para interactuar con una base de datos vectorial ChromaDB
+
+[ChromaDB](https://www.trychroma.com/) es una base de datos vectorial con la que se puede interactuar facilmente dentro de Python. La idea en esta sección es crear una aplicación que permita subir, visualizar o eliminar documentos de la base de datos vectorial. 
+
+La aplicación tambien tendrá una sección se podrá hacer una consulta a la base de datos para verificar cuales son los documentos guardados más cercanos a el texto ingresado en la consulta.
+
+### Paso 5.1: Detener la aplicación _multimodal_prompt_lab.py_ en caso de que se este ejecutando
+
+### Paso 5.2: Instalar las dependencias necesarias para utilizar la base de datos vectorial ChromaDB.
+
+Para utilizar ChromaDB en la aplicación se requiere instalar 3 librerias, las cuales se pueden instalar ejecutando siguiente comando en una terminal que tenga el entorno virtual activado:
+
+```console
+pip install chromadb==1.0.0 sentence-transformers==4.0.2 transformers==4.50.3
+```
+
+**ADVERTENCIA**: Estas librerias tienen un gran tamaño y pueden tardar varios minutos en instalarse. Mientras estas librerias se instalan se puede continuar con los siguientes pasos de este tutorial. 
+
+La libreria _chromadb_ trae todo lo necesario para poder crear e interactuar con una base de datos vectorial de ChromaDB.
+
+Las librerias _sentence-transformers_ y _transformers_ permiten utilizar los modelos de embedding necesarios para crear los vectores  que se van a almacenar en la base de datos.
+
+### Paso 5.2: Crear un archivo con las funciones que permiten interactuar con ChromaDB
+
+Dentro de la carpeta _utils_ se debe crear un archivo con el nombre _chromadb_functions.py_ 
+
+Dentro del archivo se van a crear 4 funciones que van a permitir interactuar con la base de datos ChromaDB. 
+
+Para esto, se debe copiar el siguiente código dentro del archivo:
+
+```python
+import chromadb
+from chromadb.utils import embedding_functions
+import torch
+
+#Esta linea previene que salga una advertencia en consola por un error que tiene temporalmente Streamlit con Torch.
+#No es obligatoria y no tiene relacion con la aplicacion
+torch.classes.__path__ = [] 
+
+#Funcion para almacenar un documento con un identificador en la coleccion "mi coleccion" de la base de datos vectorial
+def agregar_documento_bd(identificador:str, documento:str):
+    #Iniciar cliente para conectarse a la base de datos vectorial persistente
+    #La primera vez que se ejecuta esta sentencia se crea la carpeta chroma en el proyecto
+    #En es carpeta va a estar la base de datos vectorial
+    chroma_client = chromadb.PersistentClient(path="./chroma")  
+
+    #Definir la funcion de embedding que se va a utilizar en la coleccion de la base de datos vectorial
+    embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
+        model_name="ibm-granite/granite-embedding-278m-multilingual"
+    )
+
+    #Crear o acceder a la coleccion llamada "mi_coleccion" de la base de datos vectorial
+    #Se define la funcion de embedding que se va a usar en los documentos de la coleccion
+    mi_coleccion = chroma_client.get_or_create_collection(
+        name="mi_coleccion", 
+        embedding_function=embedding_function
+    )
+
+    #Se agrega el documento a la base de datos vectorial:
+    #La base de datos se encarga de almacenar el documento y el embedding calculado con la funcion definida
+    mi_coleccion.add(
+        ids=[identificador],
+        documents=[documento]
+    )
 
 
+#Funcion para consultar todos los documentos guardados en la colección llamada "mi_coleccion" en la base de datos vectorial
+def obtener_todos_los_documentos_bd():
+    #Iniciar cliente para conectarse a la base de datos vectorial persistente
+    #La primera vez que se ejecuta esta sentencia se crea la carpeta chroma en el proyecto
+    #En es carpeta va a estar la base de datos vectorial
+    chroma_client = chromadb.PersistentClient(path="./chroma")  
+
+    #Definir la funcion de embedding que se va a utilizar en la coleccion de la base de datos vectorial
+    embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
+        model_name="ibm-granite/granite-embedding-278m-multilingual"
+    )
+
+    #Crear o acceder a la coleccion llamada "mi_coleccion" de la base de datos vectorial
+    #Se define la funcion de embedding que se va a usar en los documentos de la coleccion
+    mi_coleccion = chroma_client.get_or_create_collection(
+        name="mi_coleccion", 
+        embedding_function=embedding_function
+    )
+
+    #Obtener los documentos guardados en la coleccion "mi_coleccion"
+    diccionario_documentos_guardados = mi_coleccion.get()
+
+    return diccionario_documentos_guardados
 
 
+#Funcion para eliminar un documento de la base de datos segun su id:
+def eliminar_documento_segun_id_bd(identificador:str):
+    #Iniciar cliente para conectarse a la base de datos vectorial persistente
+    #La primera vez que se ejecuta esta sentencia se crea la carpeta chroma en el proyecto
+    #En es carpeta va a estar la base de datos vectorial
+    chroma_client = chromadb.PersistentClient(path="./chroma")  
+
+    #Definir la funcion de embedding que se va a utilizar en la coleccion de la base de datos vectorial
+    embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
+        model_name="ibm-granite/granite-embedding-278m-multilingual"
+    )
+
+    #Crear o acceder a la coleccion llamada "mi_coleccion" de la base de datos vectorial
+    #Se define la funcion de embedding que se va a usar en los documentos de la coleccion
+    mi_coleccion = chroma_client.get_or_create_collection(
+        name="mi_coleccion", 
+        embedding_function=embedding_function
+    )
+
+    #Eliminar de la coleccion "mi_coleccion" el documento que tiene el identificador recibido
+    mi_coleccion.delete(
+        ids=[identificador]
+    )
 
 
+#Funcion que permite realizar una consulta a la base de datos vectorial y obtener la cantidad max_resultados de 
+# documentos más relevantes para la consulta realizada
+def realizar_consulta_a_la_bd(documento_consulta:str, max_resultados:int):
+    #Iniciar cliente para conectarse a la base de datos vectorial persistente
+    #La primera vez que se ejecuta esta sentencia se crea la carpeta chroma en el proyecto
+    #En es carpeta va a estar la base de datos vectorial
+    chroma_client = chromadb.PersistentClient(path="./chroma")  
+
+    #Definir la funcion de embedding que se va a utilizar en la coleccion de la base de datos vectorial
+    embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
+        model_name="ibm-granite/granite-embedding-278m-multilingual"
+    )
+
+    #Crear o acceder a la coleccion llamada "mi_coleccion" de la base de datos vectorial
+    #Se define la funcion de embedding que se va a usar en los documentos de la coleccion
+    mi_coleccion = chroma_client.get_or_create_collection(
+        name="mi_coleccion", 
+        embedding_function=embedding_function
+    )
+
+    #Obtener los documentos guardados en la coleccion "mi_coleccion"
+    documentos = mi_coleccion.query(
+        query_texts = [documento_consulta],
+        n_results=max_resultados
+    )
+
+    #Retornar los documentos relevantes para la consulta
+    return documentos
+```
+
+En este código se definen 4 funciones:
+1. _agregar_documento_bd()_: Esta funcion se conecta a la base de datos y permite agregar un documento a una colección llamada "mi_collecion" que esta dentro de la base de datos. Cuando se inserta el documento en la base de datos se almacenan su identificador, el documento (Es decir, el texto) y el vector de embedding calculado. En este caso el modelo con el que se realiza el embedding es _granite-embedding-278m-multilingual_.
+
+2. _obtener_todos_los_documentos_bd()_: Esta funcion retorna todos los documentos guardados en la coleccion "mi_coleccion" de la base de datos vectorial.
+
+3. _eliminar_documento_segun_id_bd()_: Esta funcion permite eliminar un documento segun el identificador con el que fue creado.
+
+4. _realizar_consulta_a_la_bd()_: Esta funcion recibe un texto y retorna los documentos más cercanos al texto almacenados en la base de datos vectorial.
+
+Todas estas funciones seran utilizadas para crear la aplicación que permita interactuar con la base de datos vectorial y posteriormente para crear una aplicación que permita hacer RAG sobre los documentos guardados.
+
+Cabe resaltar que estas son funciones basicas para interactuar con la base de datos y no aprovechan todas las posibilidades que ofrece ChromaDB. [ChromaDB](https://www.trychroma.com/) ofrece muchas más opciones para casos de uso más complejos.
+
+### Paso 5.3: Crear un archivo para la aplicación.
+
+Se debe crear un archivo llamado _interaccion_db.py_ al mismo nivel en el que estan los archivos _multimodal_prompt.py_ y _mini_prompt_lab.py_.
+
+Este archivo es donde se escribirá la aplicación que permitira interacción con la base de datos. 
+
+Tras crearse este archivo, así deberia verse la carpeta del proyecto:
+
+![CarpetaProyecto](./MultimediaREADME/Paso5/InteraccionDB.png)
+
+### Paso 5.4: Crear la lógica para la aplicación.
+
+Dentro del archivo _interaccion_db.py_ se debe copiar el siguiente código, el cual contiene la lógica de la aplicación completa:
+
+```python
+import streamlit as st
+from utils.chromadb_functions import *
+
+st.title("Interaccion con la base de datos vectorial")
+
+operaciones = ["Agregar un documento", "Ver documentos guardados", "Eliminar un documento", "Realizar una consulta a la base de datos"]
+
+operacion_seleccionada = st.pills("Selecciona una operacion a realizar en la base de datos", operaciones)
+
+if operacion_seleccionada == "Agregar un documento":
+    identificador_a_agregar = st.text_input("Identificador para el documento a agregar", placeholder="Escribe aquí el identificador")
+    documento_a_agregar = st.text_area("Documento a agregar", placeholder="Escribe aquí el documento que quieres agregar a la base de datos")
+
+    boton_agregar = st.button("Agregar documento")
+    if boton_agregar:
+        agregar_documento_bd(identificador_a_agregar, documento_a_agregar)
+        st.success("Documento agregado exitosamente a la base de datos")
+
+elif operacion_seleccionada == "Ver documentos guardados":
+    resultados = obtener_todos_los_documentos_bd()
+    if len(resultados['ids']) == 0:
+        st.warning("No hay documentos guardados en la base de datos")
+    else:
+        #Se realiza un bucle para recorrer los documentos y mostrarlos
+        #Se recorre cada uno de los ids y se muestra el id en el titulo del contendor
+        # y dentro del contendor se muestra el documento almacenado asociado a ese id
+        for index in range(len(resultados['ids'])):
+            with st.expander(f"ID: _{resultados['ids'][index]}_", expanded=False): 
+                st.write(resultados['documents'][index])
+
+elif operacion_seleccionada == "Eliminar un documento":
+    #Se obtienen los documentos guardados
+    resultados = obtener_todos_los_documentos_bd()
+
+    #Se obtiene la lista de identificadores de los documentos guardados
+    lista_ids = resultados['ids']
+
+    #Se muestra la lista de identificadores en un menu tipo dropdown
+    identificador_seleccionado = st.selectbox("Selecciona el identificador del documento a eliminar",lista_ids)
+
+    #Si se selecciono un identificador
+    if identificador_seleccionado is not None:
+        boton_eliminar = st.button("Haz clic aquí para eliminar el documento seleccionado", on_click=eliminar_documento_segun_id_bd, args=[identificador_seleccionado])
 
 
+elif operacion_seleccionada == "Realizar una consulta a la base de datos":
+    #Mostar un documento en pantalla
+    st.write("Escribe una consulta y observa cuales son los documentos con menor distancia al texto de la consulta")
 
+    #Crear un text area para que el usuario pueda escribir su consulta
+    texto_consulta = st.text_area("Escribe el texto con el cual realizar la consulta a la base de datos")
 
+    #Crear un number_input para que el usuario pueda decir máximo cuantos resultados quiere obtener
+    max_resultados = st.number_input("Ingresa la cantidad maxima de resultados que quieres obtener", min_value=1, value=3)
 
+    #Crear un boton para realizar la consulta
+    boton_realizar_consulta = st.button("Realizar la consulta")
+    if boton_realizar_consulta:
+        #Llamar la función para realizar la consulta a la base de datos
+        resultados = realizar_consulta_a_la_bd(texto_consulta, max_resultados)
+        #Si hubo 0 resultados, decir en pantalla
+        if len(resultados['ids']) == 0:
+            st.warning("No se encontraron documentos")
+        
+        #Si hubo resultados, mostrarlos en un contenedor cada uno, indicando su id, distancia y contenido
+        for index in range(len(resultados['ids'][0])):
+            with st.expander(f"ID: _{resultados['ids'][0][index]}_ ↔️ Distancia respecto a la consulta: {resultados['distances'][0][index]}", expanded=False): 
+                st.write(resultados['documents'][0][index])
+```
 
+### Paso 5.5: Explicación de la lógica de la aplicación
 
+En esta sección no se contruyo la aplicación paso a paso debido a que se usan varios elementos ya conocidos pero hay algunas cosas novedosas que se pueden explicar.
 
+1. Se utiliza un elemento de tipo [st.pills()](https://docs.streamlit.io/develop/api-reference/widgets/st.pills) para que el usuario pueda elegir cual operación quiere realizar sobre la base de datos vectorial.
 
+2.  Si la operación seleccionada es "Agregar un documento" el usuario podra ingresar el identificador y el documento a agregar en la aplicación. Cuando oprima un botón se llamará a la función _agregar_documento_bd()_ para insertar la información en la base de datos. Finalmente se muestra un mensaje indicando que la operación fue exitosa con el elemento [st.success](https://docs.streamlit.io/develop/api-reference/status/st.success)
 
+3. Si el usuario elige "Ver documentos guardados" entonces se llamara a la función encargada de traer los documentos guardados. La funcion _obtener_todos_los_documentos_bd()_ retorna un diccionario del siguiente estilo (El diccionario contiene más datos, pero estos son los relevantes para esta aplicación):
 
+    ```python
+    {
+        'ids':['id1','id2',...],
+        'documents':['documento1','documento2',...]
+    }
+    ```
+    Para mostrar todos los documentos se recorre la lista de _ids_ y _documents_. Mostrando cada Id junto a su documento asociado.
 
+4. Si el usuario elige la operacion "Eliminar un documento" se muestra un menú st con los ids de los documentos guardados. El usuario puede elegir un id y luego dar click a un boton para eliminarlo. Cuando se hace click este boton llama a la función _eliminar_documento_segun_id_bd()_ le pasa como argumento el id seleccionado por el usuario.
 
+5. Finalmente si se elige la operación "Realizar una consulta a la base de datos" entonces aparecera un espacio donde el usuario puede escribir su consutla y seleccionar la cantidad máxima de resultados que quiere obtener. 
+    
+    Luego el usuario puede oprimir un boton para realizar la consulta. La funcion _realizar_consulta_a_la_bd()_ retorna los resultados en un diccionario del siguiente estilo:
 
+    ```python
+    {
+        'ids':[['id1','id2',...]],
+    'documents':[['documento1','documento2',...]],
+        'distances':[[0.6,0.9,...]]
+    }
+    ```
 
+    Este diccionario se recorre para mostrar el id, el documento y la distancia del embedding del documento al embbeding del texto de la consulta del usuario.
 
+### Paso 5.6: Ejecutar la aplicación
 
+Si ya se han instalado las librerias, entonces se puede ejecutar el siguiente comando en la terminal para ejecutar la aplicación:
 
+```python
+streamlit run interaccion_db.py
+```
 
+A continuación se muestra un video ejemplificando cada una de las operaciones(Es posible que la primera operación que se realice varios segundos debido a que realiza la conexión inicial con la base de datos):
 
+- Agregar documentos y Ver documentos guardados:
 
+- Eliminar un documento:
 
-
-
-
-
+- Realizar una consulta a la base de datos:
