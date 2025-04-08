@@ -429,7 +429,299 @@ Tras estos cambios, en la parte de abajo de la aplicación deberian verse los si
 
 Hasta el momento se ha adelantado la mayor parte de la interfaz del Mini Prompt Lab. A continuación se va a escribir el código que va permitir llamar los modelos alojados en WatsonX.
 
-### Paso 3.10: Instalar una libreria para llamar a WatsonX
+### Paso 3.10: Instalar las librerias necesarias para llamar a WatsonX
+
+Para instalar las librerias primero se debe detener la aplicación de Streamlit utilizando CTRL+C en la terminal.
+
+Tras esto, en la misma terminal se debe ejecutar el comando:
+
+```console
+pip install ibm-watsonx-ai==1.3.3
+```
+
+Luego se debe ejecutar este otro comando:
+
+```console
+pip install ibm-cloud-sdk-core==3.23.0
+```
+
+Las librerias [ibm-watsonx-ai](https://ibm.github.io/watsonx-ai-python-sdk/) y [ibm-cloud-sdk-core](https://pypi.org/project/ibm-cloud-sdk-core/) permiten conectarse a diversos servicios ofrecidos por WatsonX facilmente.
+
+### Paso 3.11: Instalar una liberia para leer variables de entorno
+
+Normalmente las credenciales para acceder a los modelos de IA Generativa se escriben en un archivo _.env_ y luego se leen desde la aplicación. Esto para evitar que las credenciales queden quemadas directamente en el código y puedan ser copiadas por otras personas.
+
+Para poder leer variables almacenadas en un archivo _.env_ se debe instalar la libreria [python-dotenv](https://pypi.org/project/python-dotenv/) con el comando:
+
+```console
+pip install python-dotenv==1.1.0
+```
+
+### Paso 3.12: Crear el archivo _.env_ para escribir las credenciales
+
+En la carpeta del proyecto se crea un archivo llamado _.env_
+
+Se recomienda crear este archivo desde Visual Studio Code para evitar que quede con extensiones adicionales en el nombre, ya que es importante que unicamente se llame _.env_:
+
+![ArchivoEnv](./MultimediaREADME/Paso3/CreadoArchivEnv.png)
+
+Dentro del archivo _.env_ se escribir las siguientes variables:
+
+```bat
+WATSONX_API_KEY = 
+IBM_CLOUD_URL = https://us-south.ml.cloud.ibm.com
+WATSONX_PROJECT_ID = 
+```
+
+A las variables WATSONX_API_KEY y WATSONX_PROJECT_ID se les debe asignar el Api Key y Project Id que le den los tutores el dia del taller.
+
+Una vez asignados esos valores, el archivo _.env_ deberia verse de forma similar al siguiente:
+
+![ArchivoEnvLleno](./MultimediaREADME/Paso3/EnvLleno.png)
+
+Tras esto se puede guardar y cerrar el archivo _.env_.
+
+### Paso 3.13: Crear un archivo con las funciones necesarias para llamar a WatsonX
+
+Dentro de la carpeta del proyecto se debe crear una carpeta llamada _utils_ y dentro de esta carpeta se debe crear un archivo llamado _watsonx_functions.py_. En el editor deberia verse de la siguiente manera:
+
+![UtilsWatsonXFunctions](./MultimediaREADME/Paso3/UtilsWatsonFunctions.png)
+
+Dentro de este archivo se debe copiar el siguiente código, el cual trae dos funciones hechas para llamar los modelos en WatsonX:
+
+```python
+from ibm_watsonx_ai.foundation_models import ModelInference
+from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
+from dotenv import load_dotenv
+import os
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+import requests
+import base64
+
+#Cargar las variables de entorno escritas en el archivo .env
+load_dotenv()
+
+#Se asginan las variables de entorno a variables en el script
+watsonx_api_key = os.environ["WATSONX_API_KEY"]
+ibm_cloud_url = os.environ["IBM_CLOUD_URL"]
+watsonx_project_id = os.environ["WATSONX_PROJECT_ID"]
+
+#Se crea el diccionario creds, el cual es utilizado en el llamado a WatsonX
+creds = {"url": ibm_cloud_url, "apikey": watsonx_api_key}
+
+#Funcion para llamar modelos de texto alojados en WatsonX
+def call_watsonx_text_model(
+    prompt: str,
+    id_modelo: str,
+    min_tokens: int,
+    max_tokens: int,
+    modo: str,
+    repetition_penalty: float,
+    temperatura: float = 0.7,
+    top_p: float = 1.00,
+    top_n: int = 50,
+    random_seed: int = 1):
+
+    if modo == "Greedy":
+        #Si el modo es greedy, le pasamos los siguientes parametros al modelo
+        parametros = {
+            GenParams.DECODING_METHOD: "greedy",
+            GenParams.MIN_NEW_TOKENS: min_tokens,
+            GenParams.MAX_NEW_TOKENS: max_tokens,
+            GenParams.REPETITION_PENALTY: repetition_penalty,
+        }
+
+    elif modo == "Sampling":
+        #Si el modo es sampling, le pasamos los siguientes parametros al modelo
+        parametros = {
+            GenParams.DECODING_METHOD: "sample",
+            GenParams.MIN_NEW_TOKENS: min_tokens,
+            GenParams.MAX_NEW_TOKENS: max_tokens,
+            GenParams.TEMPERATURE: temperatura,
+            GenParams.TOP_P: top_p,
+            GenParams.TOP_K: top_n,
+            GenParams.RANDOM_SEED: random_seed,
+            GenParams.REPETITION_PENALTY: repetition_penalty
+        }
+
+    #Se crea un objeto ModelInference con todos los datos proporcionados
+    watsonx_model = ModelInference(model_id=id_modelo, params=parametros, credentials=creds, project_id=watsonx_project_id)
+
+    #Utilizando el metodo generate_text del objeto ModelInference se hace un 
+    #llamado al modelo con el prompt que se pasa como argumento. El modelo se encuentra alojado en IBM Cloud.
+    #La función retorna el texto generado por el modelo.
+    watsonx_response = watsonx_model.generate_text(prompt)
+    return watsonx_response
+
+#Funcion para llamar modelos multimodales de vision alojados en WatsonX
+def call_watsonx_vision_model(
+    prompt: str,
+    imagen,
+    id_modelo: str,
+    max_tokens: int):
+
+    #Leer los bytes de la imagen
+    image_bytes = imagen.getvalue()
+
+    #Codificar la imagen en base 64
+    image_base64_encoded_bytes = base64.b64encode(image_bytes)
+
+    #Decodificar de base 64 a un string con codificacion utf8
+    image_utf8_string = image_base64_encoded_bytes.decode('utf-8')
+
+    #Crear un autenticador para llamar a WatsonX
+    authenticator = IAMAuthenticator(watsonx_api_key)
+
+    #Generar un bearer token
+    bearer_token = authenticator.token_manager.get_token()
+
+    #Definir la url a la que se va a hacer la consulta:
+    url = "https://us-south.ml.cloud.ibm.com/ml/v1/text/chat?version=2023-05-29"
+
+    #Definir el body de la peticion, en esta se incluye el prompt que vamos a hacer y la imagen en los mensajes
+    body = {
+	"messages": [
+        {"role":"user",
+         "content":[
+            {"type":"text",
+              "text":prompt
+            },
+            {"type":"image_url",
+             "image_url":{"url":f"data:{imagen.type};base64,{image_utf8_string}"}
+            }
+        ]}
+    ],
+	"project_id": watsonx_project_id,
+	"model_id": id_modelo,
+	"max_tokens": max_tokens,
+    "temperature": 0,
+    "top_p": 1,
+    "frecuency_penalty":0,
+    "presence_penalty":0
+    }
+
+    #Headers de la peticion
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": "Bearer "+ bearer_token
+    }
+
+    #Se realiza la peticion al modelo
+    response = requests.post(url, headers=headers, json=body)
+
+    #Si la respuesta no es exitosa generar un error
+    if response.status_code != 200:
+        raise Exception("Non-200 response: "+ str(response.text))
+    
+    #Si la respuesta fue exitosa entonces leer el json de la respuesta y retornar el texto generado por el modelo
+    response_json = response.json()
+    return response_json['choices'][0]['message']['content']
+```
+
+En el código hay dos funciones:
+- La funcion _call_watsonx_text_model()_ permite llamar a los modelos capaces de procesar texto. Esta función recibe el prompt que se quiere realizar y todos los parametros con los que se quiere llamar el modelo alojado en la plataforma WatsonX. Dependiendo de si seleccionamos el modo “Greedy”, o “Sampling”, se envian algunos parametros o no. La función retorna unicamente el texto generado por el modelo.
+
+- La funcion _call_watsonx_vision_model()_ permite llamar a los modelos multimodales capaces de recibir imagenes y texto para generar una respuesta. Esta función recibe el prompt que se quiere realizar, la imagen que se quiere adjuntar y algunos parametros con los que llamar el modelo alojado en la plataforma WatsonX. La función retorna unicamente el texto generado por el modelo.
+
+Una vez se ha escrito el código en el archivo _watsonx_functions.py_ se puede cerrar y guardar el archivo.
+
+### Paso 3.14: Importar la funcion _call_watsonx_text_model_ dentro del archivo _mini_prompt_lab.py_
+
+Para importar la función se debe incluir esta sentencia al inicio del código:
+
+```python
+from utils.watsonx_functions import call_watsonx_text_model
+```
+
+### Paso 3.15: Incluir la lógica para llamar a un modelo en _mini_prompt_lab.py_
+
+Al final del archivo _mini_prompt_lab.py_ se debe incluir la lógica para que cuando se oprima el botón "Llamar al modelo", se llamé la función _call_watsonx_text_model()_ con los parametros que ha ido definiendo el usuario en la aplicación.
+
+Para esto se debe modificar el código del archivo _mini_prompt_lab.py_ para que quede de la siguiente manera:
+
+```python
+import streamlit as st
+from utils.watsonx_functions import call_watsonx_text_model
+
+st.title("Mini Prompt Lab")
+
+modelo_seleccionado = st.selectbox("Elige el modelo que quieres utilizar", ["ibm/granite-3-2-8b-instruct","mistralai/mistral-large", "meta-llama/llama-3-3-70b-instruct", "meta-llama/llama-4-scout-17b-16e-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"])
+
+min_tokens_seleccionados = st.number_input("Tokens de respuesta mínimos", min_value=0)
+
+max_tokens_seleccionados = st.number_input("Tokens de respuesta máximos", min_value=0, value=200)
+
+modo_seleccionado = st.radio("Elige un modo de decodificación", ["Greedy", "Sampling"])
+
+if modo_seleccionado == "Sampling":
+    temperature_seleccionada = st.slider("Temperature", min_value=0.00, max_value=2.00, value=0.7, step=0.01)
+    top_p_seleccionado = st.slider("Top P", min_value=0.01, max_value=1.00, value=1.00, step=0.01)
+    top_n_seleccionado = st.slider("Top K", min_value=1, max_value=100, value=50, step=1)
+    random_seed_seleccionada = st.number_input("Random seed", min_value=1)
+
+repetition_penalty_seleccionada = st.slider("Repetition Penalty", min_value=1.00, max_value=2.00, value=1.00, step=0.01)
+
+prompt_del_usuario = st.text_area("Prompt", placeholder="Escribe aquí tu prompt")
+
+boton_llamar_modelo = st.button("Llamar al modelo")
+
+if boton_llamar_modelo:
+    if modo_seleccionado == "Greedy":
+        respuesta_generada = call_watsonx_text_model(
+            prompt=prompt_del_usuario,
+            id_modelo=modelo_seleccionado,
+            min_tokens= min_tokens_seleccionados,
+            max_tokens = max_tokens_seleccionados,
+            modo = modo_seleccionado,
+            repetition_penalty=repetition_penalty_seleccionada
+        )
+
+    elif modo_seleccionado == "Sampling":
+        respuesta_generada = call_watsonx_text_model(
+            prompt=prompt_del_usuario,
+            id_modelo=modelo_seleccionado,
+            min_tokens= min_tokens_seleccionados,
+            max_tokens = max_tokens_seleccionados,
+            modo = modo_seleccionado,
+            repetition_penalty=repetition_penalty_seleccionada,
+            temperatura=temperature_seleccionada,
+            top_p=top_p_seleccionado,
+            top_n=top_n_seleccionado
+        )
+    
+    with st.expander("Respuesta Generada ", expanded=True):
+        st.write(respuesta_generada)
+```
+
+La lógica adicional agregada al final del código permite que cuando se oprima el boton, se verifique si el usuario seleccionó el modo Greedy o Sampling y a partir de ello se llama a la función _call_watsonx_text_model()_ con los paremetros necesarios para cada modo. 
+
+Una vez se genera la respuesta, esta se muestra dentro de un contenedor de tipo [st.expander()](https://docs.streamlit.io/develop/api-reference/layout/st.expander). Los contenedores en Streamlit permiten crear un espacio en donde se puden incluir otros elementos.
+
+En este caso por medio de las instrucciones 
+
+```python
+    with st.expander("Respuesta Generada ", expanded=True):
+        st.write(respuesta_generada)
+```
+
+Se esta creando un contenedor de tipo st.expander, y dentro de este contenedor se esta escribiendo la respuesta generada. Las instrucciones que se ejecutan dentro de la sentencia _with_ se vana dibujar dentro del contenedor seleccionado.
+
+Para tener una mayor claridad, se va a ejecutar la aplicación y se vera su funcionamiento.
+
+### Paso 3.16: Ejecutar el Mini Prompt Lab
+
+Para ejecutar la aplicación se ejecuta el comando:
+
+```console
+streamlit run mini_prompt_lab.py
+```
+
+Una vez se ejecuta, desde el navegador se puede utilizar la aplicación para realizar un prompt a un LLM:
+
+
+
+
 
 
 
