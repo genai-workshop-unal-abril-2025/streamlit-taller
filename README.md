@@ -721,6 +721,178 @@ Una vez se ejecuta, desde el navegador se puede utilizar la aplicación para rea
 
 https://github.com/user-attachments/assets/efe11826-e66c-48f5-8bbf-3fd670cb6179
 
+Aquí se puede observar con mayor claridad que cuando el modelo responde se dibuja un contenedor st.expander() y dentro de ese contenedor se escribe la respuesta generada.
+
+### Paso 3.17: Conclusion
+
+Con esto ya se ha creado un Mini Prompt Lab con el cual se pueden experimentar con varios modelos del lenguaje y sus parametros. Dentro de est aplicación se pudo utilizar más elementos de Streamlit y se realizo la conexión con WatsonX.
+
+En la siguiente parte del taller se va a construir un Mini Prompt Lab pero que ahora utilice modelos multimodales para imagenes y texto.
+
+## Paso 4: Crear un Mini Prompt Lab para Modelos Multimodales
+
+En esta parte del taller se va a crear una nueva aplicación que permite realizar preguntas a un modelo multimodal teniendo en cuenta una imagen que el usuario suba o tome con su cámara.
+
+### Paso 4.1: Detener la aplicación _mini_prompt_lab.py_ en caso de que se este ejecutando
+
+### Paso 4.2: Crear un nuevo archivo llamado _multimodal_prompt_lab.py_
+
+La carpeta del proyecto en este momento debe verse de la siguiente forma:
+
+![CradoMultiModal](./MultimediaREADME/Paso4/ArchivoMultimodalPL.png)
+
+### Paso 4.3: Primera parte de la interfaz de la aplicación.
+
+Dentro del archivo multimodal_prompt_lab.py se deben escribir las siguientes lineas de código:
+
+```python
+import streamlit as st 
+from utils.watsonx_functions import call_watsonx_vision_model
+
+st.title("Mini Prompt Lab Multimodal")
+
+modelo_seleccionado = st.selectbox("Elige el modelo que quieres utilizar", ["meta-llama/llama-4-scout-17b-16e-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct-fp8", "meta-llama/llama-3-2-90b-vision-instruct","meta-llama/llama-3-2-11b-vision-instruct", "ibm/granite-vision-3-2-2b"]) 
+
+max_tokens_seleccionados = st.number_input("Tokens de respuesta máximos", min_value=0, value=900)
+
+modo_subir_imagen = st.radio("Selecciona una opcion", ["Subir imagen desde mi dispositivo", "Tomar una foto con la cámara"])
+```
+
+Estas lineas son similares a las usadas al inicio del Mini Prompt Lab. A partir de estas lineas se crea un titulo para la aplicación, un menu para seleccionar el modelo multimodal que se quiere usar y un espacio para escribir la maxima cantidad de tokens.
+
+Algo nuevo que se agrega en este caso es que se crea un menu en donde el usuario puede decidir si quiere subir una imagen o tomar una foto con su cámara para usarla en la aplicación.
+
+En este momento se puede ejecutar la aplicación con el comando:
+
+```python
+streamlit run multimodal_prompt_lab.py
+```
+
+Tras ejecutar la aplicación, en el navegador deberian verse los siguientes elementos:
+
+![PrimeraParteMultimodal](./MultimediaREADME/Paso4/PrimeraParteInterfaz.png)
+
+### Paso 4.4: Agregar la lógica para cuando el usuario quiere Subir una Imagen.
+
+Para que el usuario pueda subir una imagen podemos utilizar el elemento [st.file_uploader()](https://docs.streamlit.io/develop/api-reference/widgets/st.file_uploader). Este elemento crea una caja donde el usuario puede subir archivos. Por otra parte, una vez el usuario ha subido una imagen, podemos mostrarla en pantalla utilizando el elemento [st.image()](https://docs.streamlit.io/develop/api-reference/media/st.image).
+
+
+Para agregar que el usuario pueda subir una imagen y luego podamos ver la imagen subida dentro de un contendor st.expandeer() se debe modificar el código del archivo _multimodal_prompt_lab.py_ de la siguiente manera:
+
+```python
+import streamlit as st 
+from utils.watsonx_functions import call_watsonx_vision_model
+
+st.title("Mini Prompt Lab Multimodal")
+
+modelo_seleccionado = st.selectbox("Elige el modelo que quieres utilizar", ["meta-llama/llama-4-scout-17b-16e-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct-fp8", "meta-llama/llama-3-2-90b-vision-instruct","meta-llama/llama-3-2-11b-vision-instruct", "ibm/granite-vision-3-2-2b"]) 
+
+max_tokens_seleccionados = st.number_input("Tokens de respuesta máximos", min_value=0, value=900)
+
+modo_subir_imagen = st.radio("Selecciona una opcion", ["Subir imagen desde mi dispositivo", "Tomar una foto con la cámara"])
+
+if modo_subir_imagen == "Subir imagen desde mi dispositivo":
+    imagen_subida = st.file_uploader("Sube una imagen", type=["jpg","jpeg","png"])
+    if imagen_subida is not None:
+        with st.expander("Visualización de la imagen subida", expanded=True):
+            st.image(imagen_subida)
+```
+
+Si se guardan los cambios y se va al navegador, en la parte de abajo de la pantalla el usuario tiene un espacio donde puede subir la imagen y cuando sube la imagen esta puede verse en la aplicación:
+
+![EjemploSubirImagen](./MultimediaREADME/Paso4/SubirImagenEjemplo.png)
+
+### Paso 4.5 Agregar la lógica para cuando el usuario queire Tomar una foto con su cámara.
+
+Si el usuario quiere que tomar la imagen con su cámara entonces se puede utilizar el elemento [st.camera_input()](https://docs.streamlit.io/develop/api-reference/widgets/st.camera_input). Este elemento cual permite capturar imagenes con la cámara del dispositivo. 
+
+Para que este elemento se muestre cuando el usuario quiere tomar una foto con su dispositivo se debe modificar el código del archiv _multimodal_prompt_lab.py_ de la siguiente forma:
+
+```python
+import streamlit as st 
+from utils.watsonx_functions import call_watsonx_vision_model
+
+st.title("Mini Prompt Lab Multimodal")
+
+modelo_seleccionado = st.selectbox("Elige el modelo que quieres utilizar", ["meta-llama/llama-4-scout-17b-16e-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct-fp8", "meta-llama/llama-3-2-90b-vision-instruct","meta-llama/llama-3-2-11b-vision-instruct", "ibm/granite-vision-3-2-2b"]) 
+
+max_tokens_seleccionados = st.number_input("Tokens de respuesta máximos", min_value=0, value=900)
+
+modo_subir_imagen = st.radio("Selecciona una opcion", ["Subir imagen desde mi dispositivo", "Tomar una foto con la cámara"])
+
+if modo_subir_imagen == "Subir imagen desde mi dispositivo":
+    imagen_subida = st.file_uploader("Sube una imagen", type=["jpg","jpeg","png"])
+    if imagen_subida is not None:
+        with st.expander("Visualización de la imagen subida", expanded=True):
+            st.image(imagen_subida)
+
+elif modo_subir_imagen == "Tomar una foto con la cámara":
+    imagen_subida = st.camera_input("Toma una foto")
+```
+
+La variable imagen_subida contiene la imagen que subael usuario o que tome con su cámara.
+
+Si se guardan los cambios y se va al navegador, cuando el usuario elija la opción "Tomar una foto con la cámara" debe aparecer un elemento que le permita tomarla:
+
+![EjemploTomarFoto](./MultimediaREADME/Paso4/TomarFotoEjemplo.png)
+
+### Paso 4.6: Agregar un espacio para el prompt y un boton para llamar al modelo
+
+Para agregar estos elementos se debe mdoificar el código de _multimodal_prompt_lab.py_ de la siguiente manera:
+
+```python
+import streamlit as st 
+from utils.watsonx_functions import call_watsonx_vision_model
+
+st.title("Mini Prompt Lab Multimodal")
+
+modelo_seleccionado = st.selectbox("Elige el modelo que quieres utilizar", ["meta-llama/llama-4-scout-17b-16e-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct-fp8", "meta-llama/llama-3-2-90b-vision-instruct","meta-llama/llama-3-2-11b-vision-instruct", "ibm/granite-vision-3-2-2b"]) 
+
+max_tokens_seleccionados = st.number_input("Tokens de respuesta máximos", min_value=0, value=900)
+
+modo_subir_imagen = st.radio("Selecciona una opcion", ["Subir imagen desde mi dispositivo", "Tomar una foto con la cámara"])
+
+if modo_subir_imagen == "Subir imagen desde mi dispositivo":
+    imagen_subida = st.file_uploader("Sube una imagen", type=["jpg","jpeg","png"])
+    if imagen_subida is not None:
+        with st.expander("Visualización de la imagen subida", expanded=True):
+            st.image(imagen_subida)
+
+elif modo_subir_imagen == "Tomar una foto con la cámara":
+    imagen_subida = st.camera_input("Toma una foto")
+
+if imagen_subida is not None:
+    prompt_del_usuario = st.text_area("Prompt", placeholder="Escribe aquí tu prompt")
+    boton_llamar_watsonx = st.button("Llamar al modelo multimodal")
+    if boton_llamar_watsonx:
+        respuesta_generada = call_watsonx_vision_model(
+            prompt=prompt_del_usuario,
+            imagen=imagen_subida,
+            id_modelo=modelo_seleccionado,
+            max_tokens=max_tokens_seleccionados
+        )
+
+        with st.expander("Respuesta Generada", expanded=True):
+            st.write(respuesta_generada)
+```
+
+Las lineas incluidas al final se encargan de:
+
+1. Verificar que exista una imagen
+2. Cuando hay una imagen subida, mostrar un st.text_area() donde el usuario puede escribir su prompt y mostrar un st.button() para llamar el modelo.
+3. Cuando el boton se oprime, se llama a la función _call_watsonx_vision_model_ con los parametros dados por el usuario. Esta función retorna el texto generado por el modelo
+4. Finalmente, muestra la respuesta generada dentro de un contendor st.expander().
+
+UNa vez se guardan estos cambios y se va al navegador se puede probar la aplicación completa:
+
+
+
+
+
+
+
+
+
 
 
 
