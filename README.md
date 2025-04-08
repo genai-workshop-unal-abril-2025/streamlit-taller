@@ -196,11 +196,11 @@ Esta interfaz contiene los elementos que se mencionaron anteriormente y permite 
 
 Para detener la aplicación de Streamlit se debe ir a la terminal donde se esta ejecutando la aplicación y oprimir CTRL+C. 
 
-Es importante que durante este proceso no se cierre la ventana del navegador donde se estaba viendo la aplicación, ya que si la ventana del navegador se encuentra cerrada, la aplicación no se va a detener con CTRL+C.
+**Es importante que durante este proceso no se cierre la ventana del navegador** donde se estaba viendo la aplicación, ya que si la ventana del navegador se encuentra cerrada, la aplicación no se va a detener con CTRL+C.
 
-Ejemplo de cómo se ve la terminal tras detener la aplicación:
+Video ejemplo sobre cómo se ve la terminal tras detener la aplicación exitosamente:
 
-
+https://github.com/user-attachments/assets/a8eb70fa-b605-44ea-8723-e643f17196ef
 
 ### Paso 2.4: Conclusión
 
