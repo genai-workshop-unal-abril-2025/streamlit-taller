@@ -1181,6 +1181,13 @@ A continuación se muestra un video ejemplificando cada una de las operaciones(E
 
 - Agregar documentos y Ver documentos guardados:
 
+https://github.com/user-attachments/assets/dd6b249f-c2e9-41a4-b670-21412fb87a7e
+
 - Eliminar un documento:
 
+https://github.com/user-attachments/assets/48403513-5400-488c-bfb5-aa8953761e30
+
 - Realizar una consulta a la base de datos:
+
+https://github.com/user-attachments/assets/5f7273e4-749f-43de-b166-e7806091c142
+
