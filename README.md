@@ -190,6 +190,37 @@ Para visualizar todos estos elementos se deben guardar los cambios del archivo _
 
 https://github.com/user-attachments/assets/29ec2a30-f612-4afc-81c9-de6cd1d7dc32
 
+Esta interfaz contiene los elementos que se mencionaron anteriormente y permite mostrar un saludo al usuario al oprimir el boton _Saludar_.
+
+### Paso 2.3: Detener la aplicación
+
+Para detener la aplicación de Streamlit se debe ir a la terminal donde se esta ejecutando la aplicación y oprimir CTRL+C. 
+
+Es importante que durante este proceso no se cierre la ventana del navegador donde se estaba viendo la aplicación, ya que si la ventana del navegador se encuentra cerrada, la aplicación no se va a detener con CTRL+C.
+
+Ejemplo de cómo se ve la terminal tras detener la aplicación:
+
+
+
+### Paso 2.4: Conclusión
+
+En esta sección se pudo ver que por medio de los elementos que ofrece Streamlit se pudo crear una aplicación que puede recibir el nombre de un usuario y saludarlo con tan solo 9 lineas de código.
+
+Streamlit acelera mucho el desarrollo de aplicaciones web debido a que permite incluir facilmente elementos en la interfaz simplemente llamando sus funciones dentro del código Python. 
+
+Cabe resaltar que Streamlit tiene una amplia [biblioteca de elementos](https://docs.streamlit.io/develop/api-reference) que se pueden utilizar para mostrar diversos tipos de textos o graficas. Tambien tiene varios elementos para recibir distintos tipos de inputs.
+
+La idea de esta primera parte del taller era familiarizarse con la forma en que se suelen llamar los elementos de Streamlit y cómo estos se ven reflejados en la interfaz grafica.
+
+
+## Paso 3: Crear un Mini Prompt Lab
+
+### Paso 3.1: Eliminar el archivo _hola_mundo.py_
+
+### Paso 3.2: Crear un nuevo archivo llamado _mini_prompt_lab.py_.
+
+Tras e
+
 
 
 
