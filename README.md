@@ -188,6 +188,7 @@ Por otra parte, ahora el mensaje que se escribe en pantalla con st.write va a in
 
 Para visualizar todos estos elementos se deben guardar los cambios del archivo _hola_mundo.py_ y se debe ir al navegador. Tras dar click al boton _Rerun_ se deberia ver la siguiente interfaz:
 
+https://github.com/user-attachments/assets/29ec2a30-f612-4afc-81c9-de6cd1d7dc32
 
 
 
