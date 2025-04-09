@@ -1302,3 +1302,9 @@ streamlit run rag.py
 
 A continuación se muestra un ejemplo del uso de la aplicación:
 
+https://github.com/user-attachments/assets/a7b48187-702b-4103-ac30-bf7a142122e9
+
+En el ejemplo se ve que el LLM se basa principalmente en el documento (el cual fue incluido por la aplicación en el prompt al LLM) para responder la consulta del usuario.
+
+
+
