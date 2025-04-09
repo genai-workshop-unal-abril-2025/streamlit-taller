@@ -1080,6 +1080,9 @@ if operacion_seleccionada == "Agregar un documento":
 
     boton_agregar = st.button("Agregar documento")
     if boton_agregar:
+        resultados = obtener_todos_los_documentos_bd()
+        if identificador_a_agregar in resultados['ids']:
+            st.error("No se pudo agregar el documento debido a que ya existe un documento con el mismo identificador en la base de datos")
         agregar_documento_bd(identificador_a_agregar, documento_a_agregar)
         st.success("Documento agregado exitosamente a la base de datos")
 
@@ -1141,7 +1144,7 @@ En esta sección no se contruyo la aplicación paso a paso debido a que se usan 
 
 1. Se utiliza un elemento de tipo [st.pills()](https://docs.streamlit.io/develop/api-reference/widgets/st.pills) para que el usuario pueda elegir cual operación quiere realizar sobre la base de datos vectorial.
 
-2.  Si la operación seleccionada es "Agregar un documento" el usuario podra ingresar el identificador y el documento a agregar en la aplicación. Cuando oprima un botón se llamará a la función _agregar_documento_bd()_ para insertar la información en la base de datos. Finalmente se muestra un mensaje indicando que la operación fue exitosa con el elemento [st.success](https://docs.streamlit.io/develop/api-reference/status/st.success)
+2.  Si la operación seleccionada es "Agregar un documento" el usuario podra ingresar el identificador y el documento a agregar en la aplicación. Cuando oprima el botón se verificará que no exista ya un documento almacenado con el mismo identificador y llamará a la función _agregar_documento_bd()_ para insertar el nuevo documento en la base de datos. Finalmente se muestra un mensaje indicando que la operación fue exitosa con el elemento [st.success](https://docs.streamlit.io/develop/api-reference/status/st.success)
 
 3. Si el usuario elige "Ver documentos guardados" entonces se llamara a la función encargada de traer los documentos guardados. La funcion _obtener_todos_los_documentos_bd()_ retorna un diccionario del siguiente estilo (El diccionario contiene más datos, pero estos son los relevantes para esta aplicación):
 
@@ -1177,7 +1180,7 @@ Si ya se han instalado las librerias, entonces se puede ejecutar el siguiente co
 streamlit run interaccion_db.py
 ```
 
-A continuación se muestra un video ejemplificando cada una de las operaciones(Es posible que la primera operación que se realice varios segundos debido a que realiza la conexión inicial con la base de datos):
+A continuación se muestran videos ejemplificando cada una de las operaciones que se pueden realizar en la aplicación. La primera operación que se haga puede tardar un tiempo debido a que tiene que crear la base de datos (La cual queda guardada en la carpeta _chroma_ dentro del proyecto) y debe iniciar la conexión con la base de datos. Las siguientes operaciones serán más rápidas:
 
 - Agregar documentos y Ver documentos guardados:
 
@@ -1190,4 +1193,112 @@ https://github.com/user-attachments/assets/48403513-5400-488c-bfb5-aa8953761e30
 - Realizar una consulta a la base de datos:
 
 https://github.com/user-attachments/assets/5f7273e4-749f-43de-b166-e7806091c142
+
+
+## Paso 6: Crear una aplicación para hacer RAG sobre los documentos guardados
+
+En esta sección se busca crear una aplicación en donde se puedan realizar consultas a un LLM el cual base sus respuestas en los documentos más relevantes que tengamos almacenados en la base de datos vectorial.
+
+### Paso 6.1: Detener la aplicación _interaccion_db,py_ en caso de que se este ejecutando.
+
+### Paso 6.2: Crear un archivo para la aplicación RAG
+
+Se debe crear un archivo llamado _rag.py_ al mismo nivel en el que estan los archivos _interaccion_db.py_, _multimodal_prompt.py_ y _mini_prompt_lab.py_.
+
+Este archivo es donde se escribirá la aplicación para realziar RAG a partir de los documentos guardados en la base de datos vectorial.
+
+Tras crearse este archivo, así deberia verse la carpeta del proyecto:
+
+![CreadoArchivoRAG](./MultimediaREADME/Paso6/CreadoArchivoRag.png)
+
+### Paso 6.3: Crear la lógica para la aplicación.
+
+Dentro del archivo _rag.py_ se debe copiar el siguiente código, el cual contiene la lógica de la aplicación completa:
+
+```python
+import streamlit as st
+from utils.watsonx_functions import call_watsonx_text_model
+from utils.chromadb_functions import *
+
+st.title("RAG sobre los documentos guardados")
+
+# En esta seccion de la aplicación se podrá realizar una consulta a un LLM que se soporta en los documentos mas relevantes
+#Para esto, primero se verifica que existan documentos guardados en la base de datos
+resultados = obtener_todos_los_documentos_bd()
+
+if len(resultados['ids']) > 0:
+    st.write("Aquí podrás realizar una consulta a un LLM y el modelo va a responder basandose en los 3 documentos guardados más relevantes para la pregunta")
+
+    modelo_seleccionado = st.selectbox("Elige el modelo que quieres utilizar", ["ibm/granite-3-2-8b-instruct","mistralai/mistral-large", "meta-llama/llama-3-3-70b-instruct", "meta-llama/llama-4-scout-17b-16e-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"])
+
+    min_tokens_seleccionados = st.number_input("Tokens de respuesta mínimos", min_value=0)
+
+    max_tokens_seleccionados = st.number_input("Tokens de respuesta máximos", min_value=0, value=200)
+    
+    consulta_usuario = st.text_input("Escribe tu consulta para el LLM",placeholder="Escribe tu consulta")
+
+    boton_consulta_llm = st.button("Consultar al LLM")
+    if boton_consulta_llm:
+        #Llamamos la funcion encargada de extraer los documentos mas relevantes para la consulta del usuario
+        documentos= realizar_consulta_a_la_bd(consulta_usuario, max_resultados=3)
+
+        #Se construye un string con cada uno de los documentos relevantes obtenidos
+        #Se realiza un bucle para recorrer los documentos y agregarlos a un string
+        string_documentos = ""
+        for index in range(len(documentos['ids'][0])):
+            string_documentos += f"Documento {index+1}: {documentos['documents'][0][index]}\n\n"
+
+        #Una vez se tiene un string con todos los documentos relevantes se insertan estos documentos
+        # En el prompt final que se va a realizar al LLM
+        prompt_final =(
+           "Eres un asistente encargado de resolver preguntas del usuario basandote principalmente en los documentos que se tienen guardados sobre el tema de la pregunta del usuario"
+           "Tu objetivo es responder la pregunta del usuario basandote principalmente en la siguiente lista de documentos,"
+           "en caso de que en los documentos no haya informacion que consideres relevante para resolver la pregunta del usuario"
+           "entonces unicamente responde 'No se encontraron documentos relevantes para la pregunta' y mencionas cual fue la pregunta del usuario."
+           "La lista de documentos es la siguiente:\n\n"
+           f"{string_documentos}"
+           f"La pregunta del usuario es la siguiente: {consulta_usuario}\n\n"
+           "Tu respuesta es:\n"
+        ) 
+
+        #Se llama al modelo del lenguaje con el prompt creado, algunos parametros dados por el usuario
+        # y el modo Greedy y Repetition Penalty de 1:
+        respuesta_llm = call_watsonx_text_model(prompt_final,id_modelo=modelo_seleccionado, min_tokens=min_tokens_seleccionados, max_tokens=max_tokens_seleccionados, modo="Greedy", repetition_penalty=1)
+        
+        #Una vez armado el prompt se muestra el verdadero prompt que se realizo al LLM
+        # el cual que incluye los documentos relevantes
+        with st.expander("📄 Prompt enviado al LLM", expanded=False):
+            st.write(prompt_final)
+        
+        #Se muestra la respuesta generada por el LLM
+        with st.expander("✨ Respuesta generada", expanded=True):
+            st.write(respuesta_llm)
+
+else:
+    st.warning("No tienes documentos guardados en la base de datos, por favor agrega al menos uno para poder realizar consultas en esta pestaña")
+```
+
+### Paso 6.4: Explicación de la lógica de la aplicación
+
+Al inicio de la aplicación se verifica si hay almenos un documento almacenado. En caso de que haya un documento almacenado se muestran varios elementos (similares a los utilizados en el Mini Prompt Lab) para que el usuario elija el LLM al cual quiere hacer la consulta, los tokens mínimos y maximos de respuesta. Tambien se incluye un espacio para que el usuario escriba la consulta que quiere realizar al LLM.
+
+Una vez el usuario oprime el boton para realizar la consulta al LLM se realiza una consulta a la base de datos vectorial y se extraen los 3 documentos más relevantes, es decir, que tienen menor distancia hacia la consulta escrita por el usuario.
+
+Una vez se extraen los documentos, se crea una cadena de texto que almacena el contenido de cada uno de estos documentos relevantes.
+
+Esta cadena de texto posteriormente se inserta en el prompt que se va a hacer al LLM, el cual se almacena en la variable _prompt_final_.
+
+Este prompt le indica al modelo que debe resolver las preguntas basandose en la lista de documentos relevantes que se incluyen en el prompt por medio de la variable _string_documentos_
+
+Finalmente se llama al modelo con el _prompt_final_ y una vez este responde se muestra en un contenedor el prompt que estaba en la variable _prompt_final_ y en otro contenedor se observa la respuesta generada.
+
+### Paso 6.5: Ejecutar la aplicación
+
+Se utiliza el siguiente comando en la terminal para ejecutar la aplicación:
+
+```python
+streamlit run rag.py
+```
+
+A continuación se muestra un ejemplo del uso de la aplicación:
 
