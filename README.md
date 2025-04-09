@@ -1307,4 +1307,114 @@ https://github.com/user-attachments/assets/a7b48187-702b-4103-ac30-bf7a142122e9
 En el ejemplo se ve que el LLM se basa principalmente en el documento (el cual fue incluido por la aplicación en el prompt al LLM) para responder la consulta del usuario.
 
 
+## Paso 7: Unir todas las aplicaciones en una
 
+En esta sección se va a crear una nueva aplicación, en la cual cada una de las aplicaciones creadas a lo largo del tutorial van a ser páginas dentro de la aplicación.
+
+### Paso 7.1: Detener la aplicación _rag.py_ en caso de estar ejecutandose
+
+### Paso 7.2: Crear una carpeta llamada _paginas_ en el proyecto
+
+![CarpetaPaginas](./MultimediaREADME/Paso7/CreadaCarpetaPaginas.png)
+
+### Paso 7.3: Mover las aplicaciones e la carpeta paginas
+
+Se deben mover los archivos _mini_prompt_lab.py_, _multimodal_prompt_lab.py_ _interaccion_db.py_ y _rag.py_ a la carpeta paginas:
+
+![ArchivosEnCarpetaPaginas](./MultimediaREADME/Paso7/AplicacionesEnCarpetaPaginas.png)
+
+### Paso 7.4: Crear un nuevo archivo de Python en la carpeta del proyecto
+
+Se debe crear un archivo llamado app.py en la base de la carpeta del proyecto:
+
+![CreadoAppPy](./MultimediaREADME/Paso7/CreadoAppPy.png)
+
+Dentro del archivo app.py se va a incluir el código necesario para crear una aplicación que incluya cada una de las aplicaciones creadas a lo largo del tutorial.
+
+### Paso 7.5: Crear la lógica para el archivo app.py.
+
+Dentro del archivo app.py se debe incluir el siguiente código:
+
+```python
+import streamlit as st
+
+#Definir las páginas que va a tener la aplicacion
+pagina_mini_prompt_lab = st.Page(page='./paginas/mini_prompt_lab.py', title='Mini Prompt Lab')
+pagina_multimodal_prompt_lab = st.Page(page='./paginas/multimodal_prompt_lab.py', title='Multimodal Prompt Lab')
+pagina_interaccion_db = st.Page(page='./paginas/interaccion_db.py', title='Interaccion con BD Vectorial')
+pagina_rag = st.Page(page='./paginas/interaccion_db.py', title='RAG')
+
+#Se pasan las paginas al st.navigation(), el cual se encarga de permitir la navegacion entre las paginas
+# y mostrarlas en la barra lateral de la aplicacion
+pagina_seleccionada = st.navigation([pagina_mini_prompt_lab,pagina_multimodal_prompt_lab,pagina_interaccion_db,pagina_rag])
+
+#Se ejecuta la pagina que el usuario haya seleccionado en la barra de navegacion
+pagina_seleccionada.run()
+```
+
+En este código se definen cada una de las paginas que queremos tener en nuestra aplicación con el elemento [st.Page()](https://docs.streamlit.io/develop/api-reference/navigation/st.page). 
+
+Luego cada una de las paginas se agrega a una lista y se pasa como argumento al elemento [st.navigation()](https://docs.streamlit.io/develop/api-reference/navigation/st.navigation), el cual se encarga de permitir la navegación entre las páginas de la lista y las incluye en una barra lateral dentro de la aplicacion.
+
+Finalmente, la ultima linea del código se encarga de ejecutar la página que tenga seleccionado el usuario en la barra lateral.
+
+### Paso 7.6: Ejecutar la aplicacion multipagina
+
+Para ejecutar la aplicación que contiene las otras 4 aplicaciones construidas se debe ejecutar el comando:
+
+```python
+streamlit run app.py
+```
+
+Una vez se ejecute la aplicación, deberia verse de la siguiente forma:
+
+![CreadoAppPy](./MultimediaREADME/Paso7/AppMultipaginaFinal.png)
+
+Cada una de las aplicaciones creadas anteriormente ahora son pestañas en esta ultima aplicación.
+
+### Paso 7.7: (Opcional) Modificar _app.py_ para evitar que salga un error en la consola
+
+Es posible que salga el siguiente error en la consola tras ejecutar la aplicacion app.py:
+
+```
+RuntimeError: Tried to instantiate class '__path__._path', but it does not exist! Ensure that it is registered via torch::class_
+```
+
+Este error es un problema que temporalmente tiene Streamlit con la libreria Torch, pero que no afecta el funcionamiento de la aplicación. Para evitar que este error salga se puede modificar el archivo app.py se la siguiente manera:
+
+```python
+import streamlit as st
+import torch
+
+#Esta linea previene que salga una advertencia en consola por un error que tiene temporalmente Streamlit con Torch.
+#No es obligatoria y no tiene relacion con la aplicacion
+torch.classes.__path__ = [] 
+
+#Definir las páginas que va a tener la aplicacion
+pagina_mini_prompt_lab = st.Page(page='./paginas/mini_prompt_lab.py', title='Mini Prompt Lab')
+pagina_multimodal_prompt_lab = st.Page(page='./paginas/multimodal_prompt_lab.py', title='Multimodal Prompt Lab')
+pagina_interaccion_db = st.Page(page='./paginas/interaccion_db.py', title='Interaccion con BD Vectorial')
+pagina_rag = st.Page(page='./paginas/rag.py', title='RAG')
+
+#Se pasan las paginas al st.navigation(), el cual se encarga de permitir la navegacion entre las paginas
+# y mostrarlas en la barra lateral de la aplicacion
+pagina_seleccionada = st.navigation([pagina_mini_prompt_lab,pagina_multimodal_prompt_lab,pagina_interaccion_db,pagina_rag])
+
+#Se ejecuta la pagina que el usuario haya seleccionado en la barra de navegacion
+pagina_seleccionada.run()
+```
+
+Una vez realizado este cambio, ya no deberia volver a salir el error en la consola.
+
+Con esto se termina el tutorial del taller practico de Streamlit y RAG.
+
+
+# Reto.
+
+Ahora que ha terminado el tutorial se sugieren dos retos, puede seleccionar el que prefiera:
+
+1. Agregue muchos documentos sobre un tema en especifico a la base de datos vectorial, de manera que cuando se haga RAG el LLM pueda responser muchas preguntas sobre ese tema.
+
+2. Cree otra aplicación de Streamlit en donde haga uso interesante de los modelos de texto de WatsonX, los modelos de vision de WatsonX o de la base de datos Vectorial.
+
+Al final de la sesión las personas que quieran podrán mostrar el reto al resto de la clase.
