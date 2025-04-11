@@ -1256,21 +1256,23 @@ Una vez se ha usado la aplicación, se debio crear una carpeta llamada _chroma_ 
 
 En esa carpeta se almacenan todos los datos de la base de datos vectorial de la aplicación.
 
-## Sección 6: Crear una aplicación para hacer RAG sobre los documentos guardados
+## Sección 6: Crear una aplicación para hacer RAG sobre los documentos guardados en la base de datos vectorial
 
-En esta sección se busca crear una nueva aplicación en donde se puedan realizar consultas a un LLM el cual base sus respuestas en los documentos más relevantes que tengamos almacenados en la base de datos vectorial que se creo utilizando la aplicación de la anterior sección.
+En esta sección se busca crear una nueva aplicación en donde se puedan realizar consultas a un LLM el cual base sus respuestas en los documentos más relevantes que tengamos almacenados en la base de datos vectorial creada en la anterior seccion.
 
-### Paso 6.1: Detener la aplicación _interaccion_db,py_ en caso de que se este ejecutando.
+Para ello, se van a incluir los documentos relevantes en el prompt que se realiza al LLM.
 
-### Paso 6.2: Crear un archivo para la aplicación RAG
+### Paso 6.1: Detener la aplicación _interaccion_db.py_ en caso de que se este ejecutando.
 
-Se debe crear un archivo llamado _rag.py_ al mismo nivel en el que estan los archivos _interaccion_db.py_, _multimodal_prompt.py_ y _mini_prompt_lab.py_.
+### Paso 6.2: Crear un archivo para la aplicación del RAG
 
-Este archivo es donde se escribirá la aplicación para realziar RAG a partir de los documentos guardados en la base de datos vectorial.
+Se debe crear un archivo llamado _rag.py_ en la carpeta del proyecto. Este archivo debe quedar al mismo nivel en el que estan los archivos _interaccion_db.py_, _multimodal_prompt.py_ y _mini_prompt_lab.py_.
 
 Tras crearse este archivo, así deberia verse la carpeta del proyecto:
 
 ![CreadoArchivoRAG](./MultimediaREADME/Paso6/CreadoArchivoRag.png)
+
+Este archivo es donde se escribirá la aplicación para realizar RAG a partir de los documentos guardados en la base de datos vectorial.
 
 ### Paso 6.3: Crear la lógica para la aplicación.
 
@@ -1287,7 +1289,7 @@ st.title("RAG sobre los documentos guardados")
 #Para esto, primero se verifica que existan documentos guardados en la base de datos
 resultados = obtener_todos_los_documentos_bd()
 
-if len(resultados['ids']) > 0:
+if len(resultados['documents']) > 0:
     st.write("Aquí podrás realizar una consulta a un LLM y el modelo va a responder basandose en los 3 documentos guardados más relevantes para la pregunta")
 
     modelo_seleccionado = st.selectbox("Elige el modelo que quieres utilizar", ["ibm/granite-3-2-8b-instruct","mistralai/mistral-large", "meta-llama/llama-3-3-70b-instruct", "meta-llama/llama-4-scout-17b-16e-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"])
@@ -1312,14 +1314,14 @@ if len(resultados['ids']) > 0:
         #Una vez se tiene un string con todos los documentos relevantes se insertan estos documentos
         # En el prompt final que se va a realizar al LLM
         prompt_final =(
-           "Eres un asistente encargado de resolver preguntas del usuario basandote principalmente en los documentos que se tienen guardados sobre el tema de la pregunta del usuario"
+           "Eres un asistente encargado de resolver preguntas del usuario basandote principalmente en los documentos que se tienen guardados sobre el tema de la pregunta del usuario\n\n"
            "Tu objetivo es responder la pregunta del usuario basandote principalmente en la siguiente lista de documentos,"
            "en caso de que en los documentos no haya informacion que consideres relevante para resolver la pregunta del usuario"
-           "entonces unicamente responde 'No se encontraron documentos relevantes para la pregunta' y mencionas cual fue la pregunta del usuario."
+           "entonces unicamente responde 'No se encontraron documentos relevantes para la pregunta' y mencionas cual fue la pregunta del usuario.\n\n"
            "La lista de documentos es la siguiente:\n\n"
            f"{string_documentos}"
            f"La pregunta del usuario es la siguiente: {consulta_usuario}\n\n"
-           "Tu respuesta es:\n"
+           "Tu respuesta es:\n\n"
         ) 
 
         #Se llama al modelo del lenguaje con el prompt creado, algunos parametros dados por el usuario
@@ -1341,17 +1343,18 @@ else:
 
 ### Paso 6.4: Explicación de la lógica de la aplicación
 
-Al inicio de la aplicación se verifica si hay almenos un documento almacenado. En caso de que haya un documento almacenado se muestran varios elementos (similares a los utilizados en el Mini Prompt Lab) para que el usuario elija el LLM al cual quiere hacer la consulta, los tokens mínimos y maximos de respuesta. Tambien se incluye un espacio para que el usuario escriba la consulta que quiere realizar al LLM.
+Al inicio del código de la aplicación se verifica si hay al menos un documento almacenado. En caso de que haya un documento almacenado se muestran varios elementos (similares a los utilizados en el Mini Prompt Lab) para que el usuario elija el LLM al cual quiere hacer la consulta, los tokens mínimos y maximos de respuesta. Tambien se incluye un espacio para que el usuario escriba la consulta que quiere realizar al LLM.
 
-Una vez el usuario oprime el boton para realizar la consulta al LLM se realiza una consulta a la base de datos vectorial y se extraen los 3 documentos más relevantes, es decir, que tienen menor distancia hacia la consulta escrita por el usuario.
+Una vez el usuario oprime el boton para realizar la consulta al LLM ocurren varias cosas:
+1. Se realiza una consulta a la base de datos vectorial y se extraen los 3 documentos más relevantes, es decir, aquellosque tienen menor distancia hacia la consulta escrita por el usuario.
 
-Una vez se extraen los documentos, se crea una cadena de texto que almacena el contenido de cada uno de estos documentos relevantes.
+2. Una vez se extraen los documentos, se recorren los documentos y se un string que incluye el contenido de cada uno de estos documentos relevantes.
 
-Esta cadena de texto posteriormente se inserta en el prompt que se va a hacer al LLM, el cual se almacena en la variable _prompt_final_.
+3. Se crea la variable _prompt_final_, la cual incluye varias instrucciones para el LLM y además incluye el string almacenado en la variable _string_documentos_, el cual incluye el texto de los 3 documentos mas cercanos a la pregunta del usuario. La variable _prompt_final contiene el prompt aumentado que realmente se va a hacer al LLM.
 
-Este prompt le indica al modelo que debe resolver las preguntas basandose en la lista de documentos relevantes que se incluyen en el prompt por medio de la variable _string_documentos_
+Este prompt le indica al modelo que debe resolver las preguntas basandose principalmente en la lista de documentos relevantes que se incluyen en el prompt por medio de la variable _string_documentos_
 
-Finalmente se llama al modelo con el _prompt_final_ y una vez este responde se muestra en un contenedor el prompt que estaba en la variable _prompt_final_ y en otro contenedor se observa la respuesta generada.
+Finalmente se llama al modelo con el _prompt_final_ y una vez este responde se muestra en un contenedor el prompt que estaba en la variable _prompt_final_ (Esto para que el usuario vea el prompt que realmente se hizo al LLM) y en otro contenedor se observa la respuesta generada.
 
 ### Paso 6.5: Ejecutar la aplicación
 
@@ -1365,12 +1368,14 @@ A continuación se muestra un ejemplo del uso de la aplicación:
 
 https://github.com/user-attachments/assets/a7b48187-702b-4103-ac30-bf7a142122e9
 
-En el ejemplo se ve que el LLM se basa principalmente en el documento (el cual fue incluido por la aplicación en el prompt al LLM) para responder la consulta del usuario.
+En el ejemplo se ve que el LLM se basa principalmente en el documento (el cual fue incluido por la aplicación en el prompt del LLM) para responder la consulta del usuario.
 
 
-## Paso 7: Unir todas las aplicaciones en una
+## Paso 7: Unir todas las aplicaciones en una sola aplicación
 
-En esta sección se va a crear una nueva aplicación, en la cual cada una de las aplicaciones creadas a lo largo del tutorial van a ser páginas dentro de la aplicación.
+Streamlit permite crear aplicaciones que tengan [multiples pestañas](https://docs.streamlit.io/develop/concepts/multipage-apps) a partir de varios archivos Python.
+
+En esta sección se va a crear una nueva aplicación, en la cual cada una de las aplicaciones creadas a lo largo del tutorial van a ser pestañas dentro de la aplicación.
 
 ### Paso 7.1: Detener la aplicación _rag.py_ en caso de estar ejecutandose
 
