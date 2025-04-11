@@ -1370,12 +1370,11 @@ https://github.com/user-attachments/assets/dd4da25c-0a1f-459e-ae32-064e0f26105e
 
 En el ejemplo se ve que el LLM se basa principalmente en el documento (el cual fue incluido por la aplicación en el prompt del LLM) para responder la consulta del usuario.
 
-
 ## Paso 7: Unir todas las aplicaciones en una sola aplicación
 
-Streamlit permite crear aplicaciones que tengan [multiples pestañas](https://docs.streamlit.io/develop/concepts/multipage-apps) a partir de varios archivos Python.
+Streamlit permite crear aplicaciones que tengan [multiples pestañas](https://docs.streamlit.io/develop/concepts/multipage-apps) a partir de varios archivos Python. En esta sexxión se va a ver una forma de crear aplicaciones con multiples pestañas en streamlit.
 
-En esta sección se va a crear una nueva aplicación, en la cual cada una de las aplicaciones creadas a lo largo del tutorial van a ser pestañas dentro de la aplicación.
+Para ello se va a crear una nueva aplicación, en la cual cada una de las aplicaciones creadas a lo largo del tutorial van a ser pestañas dentro de la aplicación.
 
 ### Paso 7.1: Detener la aplicación _rag.py_ en caso de estar ejecutandose
 
@@ -1408,7 +1407,7 @@ import streamlit as st
 pagina_mini_prompt_lab = st.Page(page='./paginas/mini_prompt_lab.py', title='Mini Prompt Lab')
 pagina_multimodal_prompt_lab = st.Page(page='./paginas/multimodal_prompt_lab.py', title='Multimodal Prompt Lab')
 pagina_interaccion_db = st.Page(page='./paginas/interaccion_db.py', title='Interaccion con BD Vectorial')
-pagina_rag = st.Page(page='./paginas/interaccion_db.py', title='RAG')
+pagina_rag = st.Page(page='./paginas/rag.py', title='RAG')
 
 #Se pasan las paginas al st.navigation(), el cual se encarga de permitir la navegacion entre las paginas
 # y mostrarlas en la barra lateral de la aplicacion
@@ -1426,13 +1425,13 @@ Finalmente, la ultima linea del código se encarga de ejecutar la página que te
 
 ### Paso 7.6: Ejecutar la aplicacion multipagina
 
-Para ejecutar la aplicación que contiene las otras 4 aplicaciones construidas se debe ejecutar el comando:
+Para ejecutar la aplicación se debe ejecutar el comando:
 
 ```python
 streamlit run app.py
 ```
 
-Una vez se ejecute la aplicación, deberia verse de la siguiente forma:
+Una vez se ejecute la aplicación, en el navegador deberia verse de la siguiente forma:
 
 ![CreadoAppPy](./MultimediaREADME/Paso7/AppMultipaginaFinal.png)
 
@@ -1474,12 +1473,15 @@ Una vez realizado este cambio, ya no deberia volver a salir el error en la conso
 
 Con esto se termina el tutorial del taller practico de Streamlit y RAG.
 
+Streamlit es un framework muy adecuado para construir aplicaciones simples rápidamente.
+
+Si quiere aprender más sobre este framework puede ir a la página de introducción de Streamlit: https://docs.streamlit.io/get-started
 
 # Reto.
 
 Ahora que ha terminado el tutorial se sugieren dos retos, puede seleccionar el que prefiera:
 
-1. Agregue muchos documentos sobre un tema en especifico a la base de datos vectorial, de manera que cuando se haga RAG el LLM pueda responser muchas preguntas sobre ese tema.
+1. Agregue muchos documentos sobre un tema en especifico a la base de datos vectorial, de manera que cuando se haga RAG el LLM pueda responder muchas preguntas sobre ese tema.
 
 2. Cree otra aplicación de Streamlit en donde haga uso interesante de los modelos de texto de WatsonX, los modelos de vision de WatsonX o de la base de datos Vectorial.
 
