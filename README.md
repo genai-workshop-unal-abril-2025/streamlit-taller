@@ -11,7 +11,7 @@ Este taller tiene como objetivo crear varias aplicaciones de [Streamlit](https:/
 
 ### Paso 0.1: Crear una carpeta para almacenar el código de la aplicación.
 
-Se debe crear una carpeta ya que ahí es donde se crearan todos los archivos del proyecto. Esta carpeta puede tener cualquier nombre, en este caso se puso el nombre _streamlit-taller_:
+Se debe crear una carpeta en el computador. Dentro de esa carpeta es donde se crearan todos los archivos del proyecto. Esta carpeta puede tener cualquier nombre, en este caso se puso el nombre _streamlit-taller_:
 
 ![Carpeta Creada](./MultimediaREADME/Paso0/CarpetaCreada.png)
 
@@ -753,7 +753,7 @@ streamlit run mini_prompt_lab.py
 
 Una vez se ejecuta, desde el navegador se puede utilizar la aplicación para realizar un prompt a un LLM:
 
-https://github.com/user-attachments/assets/efe11826-e66c-48f5-8bbf-3fd670cb6179
+https://github.com/user-attachments/assets/4df52147-3e09-4b9e-96fe-d15521c94292
 
 Aquí se puede observar con mayor claridad que cuando el modelo responde se dibuja un contenedor  (El cual corresponse al st.expander()) y dentro de ese contenedor se escribe la respuesta generada.
 
