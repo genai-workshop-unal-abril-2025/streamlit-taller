@@ -935,7 +935,11 @@ Las bases de datos vectoriales son bases de datos especiales que permiten almace
 
 Debido a esto, a las bases de datos vectoriales se les puede hacer una consulta con una frase y ellas pueden responder con los documentos cuyo vector de embedding tiene menor distancia al texto que se recibio en la consulta.
 
-Este tipo de bases de datos son muy utilizadas para realizar RAG. En este tutorial se utilizarán unicamente algunas funciones basicas que ofrecen este tipo de bases de datos, pero cabe resaltar que este tipo de bases de datos pueden ofrecer muchas más funcionalidades.
+Este tipo de bases de datos son muy utilizadas para realizar RAG. En este tutorial se utilizarán unicamente algunas funciones basicas que ofrecen, pero cabe resaltar que este tipo de bases de datos pueden ofrecer muchas más funcionalidades.
+
+Una base de datos creada en ChromaDB se divide en colecciones. Cada colección permite almacenar documentos de forma aislada a las otras colecciones de la base de datos, esto sirve para que en cada colección que se cree unicamente se guarden datos de un tema en especifico (Por ejemplo tener una colección para textos que hablen de cocina y otra coleccion para textos que hablen de historia). 
+
+Las colecciones en las bases de datos vectoriales son similares a lo que son las tablas en las bases de datos relacionales, en donde se crea una tabla para cada entidad que se quiere almancenar en la base de datos relacional. En el caso de este tutorial solo se va a crear una sola coleccion en la base de datos, en donde se van a almacenar todos los datos que el usuario cree.
 
 La idea en esta sección es crear una aplicación que permita subir, visualizar o eliminar documentos de la base de datos vectorial. 
 
@@ -959,7 +963,9 @@ Las librerias _sentence-transformers_ y _transformers_ permiten utilizar los mod
 
 ### Paso 5.2: Crear un archivo con las funciones que permiten interactuar con ChromaDB
 
-Dentro de la carpeta _utils_ se debe crear un archivo con el nombre _chromadb_functions.py_ 
+Dentro de la carpeta _utils_ se debe crear un archivo con el nombre _chromadb_functions.py_. La carpeta del proyecto deberia verse de esta forma tras crear el archivo: 
+
+![Creado chromadb functions](./MultimediaREADME/Paso5/CreadoChromaDbFunctions.png)
 
 Dentro del archivo se van a crear 4 funciones que van a permitir interactuar con la base de datos ChromaDB. 
 
@@ -1082,19 +1088,21 @@ def realizar_consulta_a_la_bd(documento_consulta:str, max_resultados:int):
 ```
 
 En este código se definen 4 funciones:
-1. _agregar_documento_bd()_: Esta funcion se conecta a la base de datos y permite agregar un documento a una colección llamada "mi_collecion" que esta dentro de la base de datos. Cuando se inserta el documento en la base de datos se almacenan su identificador, el documento (Es decir, el texto) y el vector de embedding calculado. En este caso el modelo con el que se realiza el embedding es _granite-embedding-278m-multilingual_.
+1. _agregar_documento_bd()_: Esta funcion se conecta a la base de datos y permite agregar un documento a una colección llamada "mi_collecion".
+
+    En caso de que la colleción no exista dentro de la base de datos, esta función la crea automaticamente. Cuando se inserta el documento en la base de datos se almacenan su identificador, el documento (Es decir, el texto) y el vector de embedding calculado. En este caso el modelo con el que se crea el embedding es _granite-embedding-278m-multilingual_.
 
 2. _obtener_todos_los_documentos_bd()_: Esta funcion retorna todos los documentos guardados en la coleccion "mi_coleccion" de la base de datos vectorial.
 
 3. _eliminar_documento_segun_id_bd()_: Esta funcion permite eliminar un documento segun el identificador con el que fue creado.
 
-4. _realizar_consulta_a_la_bd()_: Esta funcion recibe un texto y retorna los documentos más cercanos al texto almacenados en la base de datos vectorial.
+4. _realizar_consulta_a_la_bd()_: Esta funcion recibe un texto y retorna los documentos almacenados más cercanos al texto escrito en la consulta.
 
 Todas estas funciones seran utilizadas para crear la aplicación que permita interactuar con la base de datos vectorial y posteriormente para crear una aplicación que permita hacer RAG sobre los documentos guardados.
 
-Cabe resaltar que estas son funciones basicas para interactuar con la base de datos y no aprovechan todas las posibilidades que ofrece ChromaDB. [ChromaDB](https://www.trychroma.com/) ofrece muchas más opciones para casos de uso más complejos.
+Cabe resaltar que estas son funciones basicas para interactuar con la base de datos y no aprovechan todas las posibilidades que ofrece ChromaDB. [ChromaDB](https://www.trychroma.com/). ChromaDB ofrece muchas otras funcionalidades y opciones para otros casos de uso más complejos.
 
-### Paso 5.3: Crear un archivo para la aplicación.
+### Paso 5.3: Crear un archivo para la aplicación que permitirá la interacción con base de datos vectorial.
 
 Se debe crear un archivo llamado _interaccion_db.py_ al mismo nivel en el que estan los archivos _multimodal_prompt.py_ y _mini_prompt_lab.py_.
 
@@ -1126,9 +1134,10 @@ if operacion_seleccionada == "Agregar un documento":
     if boton_agregar:
         resultados = obtener_todos_los_documentos_bd()
         if identificador_a_agregar in resultados['ids']:
-            st.error("No se pudo agregar el documento debido a que ya existe un documento con el mismo identificador en la base de datos")
-        agregar_documento_bd(identificador_a_agregar, documento_a_agregar)
-        st.success("Documento agregado exitosamente a la base de datos")
+            st.error("No se pudo agregar el documento debido a que ya existe un documento con el mismo identificador en la coleccion de la base de datos")
+        else:
+            agregar_documento_bd(identificador_a_agregar, documento_a_agregar)
+            st.success("Documento agregado exitosamente a la base de datos")
 
 elif operacion_seleccionada == "Ver documentos guardados":
     resultados = obtener_todos_los_documentos_bd()
@@ -1173,18 +1182,21 @@ elif operacion_seleccionada == "Realizar una consulta a la base de datos":
         #Llamar la función para realizar la consulta a la base de datos
         resultados = realizar_consulta_a_la_bd(texto_consulta, max_resultados)
         #Si hubo 0 resultados, decir en pantalla
-        if len(resultados['ids']) == 0:
+        if len(resultados['ids'][0]) == 0:
             st.warning("No se encontraron documentos")
         
-        #Si hubo resultados, mostrarlos en un contenedor cada uno, indicando su id, distancia y contenido
-        for index in range(len(resultados['ids'][0])):
-            with st.expander(f"ID: _{resultados['ids'][0][index]}_ ↔️ Distancia respecto a la consulta: {resultados['distances'][0][index]}", expanded=False): 
-                st.write(resultados['documents'][0][index])
+        else:
+            #Si hubo resultados, mostrarlos en un contenedor cada uno, indicando su id, distancia y contenido
+            for index in range(len(resultados['ids'][0])):
+                with st.expander(f"ID: _{resultados['ids'][0][index]}_ ↔️ Distancia respecto a la consulta: {resultados['distances'][0][index]}", expanded=False): 
+                    st.write(resultados['documents'][0][index])
 ```
 
 ### Paso 5.5: Explicación de la lógica de la aplicación
 
-En esta sección no se contruyo la aplicación paso a paso debido a que se usan varios elementos ya conocidos pero hay algunas cosas novedosas que se pueden explicar.
+En esta sección no se contruyo la aplicación paso a paso debido a que en su mayoria se usan varios elementos ya conocidos en anteriores secciones.
+
+Sin embargo, hay algunas cosas nuevas que se explican a continuación:
 
 1. Se utiliza un elemento de tipo [st.pills()](https://docs.streamlit.io/develop/api-reference/widgets/st.pills) para que el usuario pueda elegir cual operación quiere realizar sobre la base de datos vectorial.
 
@@ -1198,9 +1210,9 @@ En esta sección no se contruyo la aplicación paso a paso debido a que se usan 
         'documents':['documento1','documento2',...]
     }
     ```
-    Para mostrar todos los documentos se recorre la lista de _ids_ y _documents_. Mostrando cada Id junto a su documento asociado.
+    Para mostrar todos los documentos se recorre la lista de _ids_ y _documents_. Mostrando cada id junto a su documento asociado.
 
-4. Si el usuario elige la operacion "Eliminar un documento" se muestra un menú st con los ids de los documentos guardados. El usuario puede elegir un id y luego dar click a un boton para eliminarlo. Cuando se hace click este boton llama a la función _eliminar_documento_segun_id_bd()_ le pasa como argumento el id seleccionado por el usuario.
+4. Si el usuario elige la operacion "Eliminar un documento", se muestra un menú de tipop st.select_box con los ids de los documentos guardados. El usuario puede elegir un id y luego dar click a un boton para eliminarlo. Cuando se hace click este boton llama a la función _eliminar_documento_segun_id_bd()_ y le pasa como argumento el id seleccionado por el usuario.
 
 5. Finalmente si se elige la operación "Realizar una consulta a la base de datos" entonces aparecera un espacio donde el usuario puede escribir su consutla y seleccionar la cantidad máxima de resultados que quiere obtener. 
     
@@ -1214,7 +1226,7 @@ En esta sección no se contruyo la aplicación paso a paso debido a que se usan 
     }
     ```
 
-    Este diccionario se recorre para mostrar el id, el documento y la distancia del embedding del documento al embbeding del texto de la consulta del usuario.
+    Este diccionario se recorre para mostrar el id, el documento y la distancia del embedding del documento al embbeding del texto de la consulta del usuario. Por ejemplo, la distancia que esta en la primera posición de la lista de _distances_ corresponde a la distancia respecto a la consulta del usuario que tiene el contenido del documento que esta en la primera posicion de la lista _documents_.
 
 ### Paso 5.6: Ejecutar la aplicación
 
@@ -1238,10 +1250,15 @@ https://github.com/user-attachments/assets/48403513-5400-488c-bfb5-aa8953761e30
 
 https://github.com/user-attachments/assets/5f7273e4-749f-43de-b166-e7806091c142
 
+Una vez se ha usado la aplicación, se debio crear una carpeta llamada _chroma_ dentro de la carpeta del proyecto:
 
-## Paso 6: Crear una aplicación para hacer RAG sobre los documentos guardados
+![CarpetaChroma](./MultimediaREADME/Paso5/CreadaCarpetaChroma.png)
 
-En esta sección se busca crear una aplicación en donde se puedan realizar consultas a un LLM el cual base sus respuestas en los documentos más relevantes que tengamos almacenados en la base de datos vectorial.
+En esa carpeta se almacenan todos los datos de la base de datos vectorial de la aplicación.
+
+## Sección 6: Crear una aplicación para hacer RAG sobre los documentos guardados
+
+En esta sección se busca crear una nueva aplicación en donde se puedan realizar consultas a un LLM el cual base sus respuestas en los documentos más relevantes que tengamos almacenados en la base de datos vectorial que se creo utilizando la aplicación de la anterior sección.
 
 ### Paso 6.1: Detener la aplicación _interaccion_db,py_ en caso de que se este ejecutando.
 
