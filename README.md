@@ -1473,9 +1473,7 @@ Una vez realizado este cambio, ya no deberia volver a salir el error en la conso
 
 Con esto se termina el tutorial del taller practico de Streamlit y RAG.
 
-Streamlit es un framework muy adecuado para construir aplicaciones simples rápidamente.
-
-Si quiere aprender más sobre este framework puede ir a la página de introducción de Streamlit: https://docs.streamlit.io/get-started
+Streamlit es un framework muy adecuado para construir aplicaciones web rápidamente. En este tutorial solo se vieron algunos elementos que componen este framework, si quiere aprender más puede ir a la pagina de introducción de Streamlit: https://docs.streamlit.io/get-started
 
 # Reto.
 
