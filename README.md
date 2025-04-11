@@ -1,23 +1,29 @@
 # Taller practico sobre Streamlit.
 
-Este taller tiene como objetivo crear varias aplicaciones de Streamlit en donde se pueda interactuar con modelos de inteligencia artificial generativa alojados en WatsonX, con una base de datos vectorial de ChromaDB y crear un RAG que permita consultar los documentos guardados en la base de datos vectorial.
+Este taller tiene como objetivo crear varias aplicaciones de [Streamlit](https://streamlit.io/) en donde se pueda interactuar con modelos de inteligencia artificial generativa alojados en [WatsonX](https://www.ibm.com/es-es/watsonx), con una base de datos vectorial de [ChromaDB](https://www.trychroma.com/) y crear un RAG que permita consultar los documentos guardados en la base de datos vectorial.
 
 ## Prerrequisitos.
-- Tener instalado Python. (La versión recomendada es **Python 3.11.9**. Esto debido a que en las versiones 3.12 y 3.13 se requiere descargar las Visual Studio Build Tools para poder instalar las dependencias de la app)
-- (Opcional pero muy recomendable) Tener instalado Visual Studio Code.
+- Tener instalado Python. (La versión recomendada es [**Python 3.11.9**](https://www.python.org/downloads/release/python-3119/). Esto debido a que en las versiones 3.12 y 3.13 se requiere descargar las Visual Studio Build Tools para poder instalar las dependencias de la app)
+- (Opcional pero muy recomendable) Tener instalado [Visual Studio Code](https://code.visualstudio.com/).
 
 
-## Paso 0: Preparación e Instalación de Streamlit.
+## Seccion 0: Preparación del entorno e Instalación de Streamlit.
 
 ### Paso 0.1: Crear una carpeta para almacenar el código de la aplicación.
 
+Se debe crear una carpeta ya que ahí es donde se crearan todos los archivos del proyecto. Esta carpeta puede tener cualquier nombre, en este caso se puso el nombre _streamlit-taller_:
+
 ![Carpeta Creada](./MultimediaREADME/Paso0/CarpetaCreada.png)
 
-### Paso 0.2: Abrir la carpeta con un editor de código (Se recomienda Visual Studio Code).
+### Paso 0.2: Abrir la carpeta con un editor de código (Se recomienda [Visual Studio Code](https://code.visualstudio.com/)).
+
+Tras abrir la carpeta en Visual Studio Code, se deberia ver la siguiente interfaz en la pantalla:
 
 ![Carpeta Abierta VSC](./MultimediaREADME/Paso0/CarpetaAbiertaVSC.png)
 
 ### Paso 0.3: Abrir una consola ubicada en la carpeta del proyecto.
+
+En la consola deberia verse la ruta hasta la carpeta que se creo en el _Paso 0.1_:
 
 ![Primera Consola Proyecto](./MultimediaREADME/Paso0/PrimeraConsolaProyecto.png)
 
@@ -35,27 +41,27 @@ En la consola se deberia ver una lista de las versiones de Python instaladas. Po
 
 ### Paso 0.5: Crear un entorno virtual de Python.
 
-Un entorno virtual de python es una carpeta donde se tiene una versión de Python y paquetes instalados de forma aislada a la instalación principal de Python que se tiene en todo el sistema.
+Un entorno virtual de python es una carpeta donde se tiene una versión de Python y sus paquetes instalados de forma aislada a la instalación principal de Python que se tiene en todo el sistema.
 
-Para crear un entorno virtual que tenga nombre _.venv_ se debe usar el siguiente comando, donde la X se debe remplazar por la versión de Python con la que se quiere crear el entorno virtual
+Para crear un entorno virtual, el cual se va a llamar _.venv_ se debe usar el siguiente comando en la consola, donde la X se debe remplazar por la versión de Python con la que se quiere crear el entorno virtual
 
 ```console
 py -3.X -m venv .venv
 ```
 
-Por ejemplo, en caso de crear un entorno virtual de Python 3.11 (que es la version recomendada) se usaria el comando:
+Por ejemplo, en caso de crear un entorno virtual de Python 3.11 (que es la version recomendada para este taller) se usaria el siguiente comando en la consola:
 
 ```console
 py -3.11 -m venv .venv
 ```
 
-Tras ejecutar el comando se debio crear una carpeta llamada _.venv_ en el proyecto, esta carpeta corresponde al entorno virtual que se usará para el proyecto:
+Tras ejecutar el comando se debio crear una carpeta llamada _.venv_ en el proyecto, esta carpeta corresponde al entorno virtual de Python que se usará para el proyecto:
 
 ![Entorno Virtual Creado](./MultimediaREADME/Paso0/EntornoVirtualCreado.png)
 
-### Paso 0.6: Activar el entorno virtual en la terminal
+### Paso 0.6: Activar el entorno virtual en la consola
 
-En la terminal ubicada en la carpeta del proyecto se debe ejecutar alguno de los siguientes comandos para activar el entorno virtual.
+En la consola que esta ubicada en la carpeta del proyecto se debe ejecutar alguno de los siguientes comandos para activar el entorno virtual.
 
 En caso de tener una terminal de Powershell utilizar el comando:
 
@@ -68,15 +74,15 @@ En caso de tener una terminal de comandos de Windows (CMD) utilziar el comando:
 .\.venv\Scripts\activate.bat
 ```
 
-Tras ejecutar el comando, en la parte izquierda de la terminal deberia verse el nombre del entorno virtual que fue activado:
+Tras ejecutar el comando, en la parte izquierda de la terminal deberia verse el nombre del entorno virtual que fue activado (en este caso _.venv_):
 
 ![Imagen entorno activado](./MultimediaREADME/Paso0/EntornoActivado.png)
 
-Al tener el entorno virtual activado en la terminal, todos los paquetes que se instalen desde la terminal unicamente serán almacenados en el entorno virtual, no en la instalación de Python de todo el sistema.
+Al tener activar el entorno virtual en la consola, todos los paquetes que se instalen desde esa consola unicamente serán almacenados en la carpeta del entorno virtual, es decir en la carpeta _.venv_. Esto evita que los paquetes se instalen en todo el sistema, sino que unicamente queden aislados dentro de la carpeta _.venv_ .
 
 ### Paso 0.7: Instalar Streamlit en el entorno virtual
 
-Para instalar Streamlit se debe utilizar el siguiente comando en la terminal que tiene el entorno virtual activado:
+Para instalar Streamlit se debe utilizar el siguiente comando en la consola que tiene el entorno virtual activado:
 
 ```console
 pip install streamlit==1.44.1
@@ -84,11 +90,13 @@ pip install streamlit==1.44.1
 
 Tras ejecutar el comando empezarán a descargarse e instalarse todas las librerias necesarias para Streamlit. Este proceso puede tardar unos minutos.
 
-## Paso 1: Crear un Hola Mundo en Streamlit.
+## Sección 1: Crear una aplicación que diga Hola Mundo en Streamlit.
 
 ### Paso 1.1: Crear el archivo _hola_mundo.py_
 
-Las aplicaciones de Streamlit se basan en archivos de Python. Es por ello que lo primero que se debe hacer para crear una aplicación de Streamlit es crear un archivo Python. Para este taller se debe crear un archivo llamado _hola_mundo.py_ dentro de la carpeta del proyecto:
+Las aplicaciones de Streamlit se basan en archivos de Python. Es por ello que lo primero que se debe hacer para crear una aplicación de Streamlit es crear un archivo Python. Para este taller se debe crear un archivo llamado _hola_mundo.py_ dentro de la carpeta del proyecto.
+
+Tras crear el archivo _hola_mundo.py_, la carpeta deberia verse de la siguiente manera en Visual Studio Code:
 
 ![CreadoArchivoHolaMundo](./MultimediaREADME/Paso1/CreadoArchivoHolaMundo.png)
 
@@ -102,13 +110,13 @@ import streamlit as st
 st.write("Hola Mundo")
 ```
 
-La primera linea del código se encarga de importar la libreria streamlit y permite utilizarla bajo el nombre _st_. La segunda linea utiliza el elemento [st.write()](https://link-url-here.org) de Streamlit. Este elemento permite mostrar en la pantalla de la aplicación el texto que recibe como argumento.
+La primera linea del código se encarga de importar la libreria streamlit y permite utilizarla bajo el nombre _st_. La segunda linea utiliza el elemento [st.write()](https://link-url-here.org) de Streamlit. Este elemento permite mostrar texcto en la pantalla de la aplicación. En este caso el texto que va a mostrar es "Hola Mundo".
 
-Tras escribir este código se debe guardar el archivo _hola_mundo.py_
+Tras esto, se deben guardar los cambios realizado en el archivo _hola_mundo.py_
 
 ### Paso 1.3: Ejecutar la aplicación _hola_mundo.py_
 
-Para ejecutar la aplicación se debe utilizar el siguiente comando en la terminal que tiene activado el entorno virtual:
+Para ejecutar la aplicación se debe utilizar el siguiente comando en la terminal que tiene el entorno virtual activado:
 
 ```console
 streamlit run hola_mundo.py
@@ -120,17 +128,17 @@ Dentro de esta ventana deberia verse el mensaje 'Hola Mundo':
 
 ![CapturaHolaMundo](./MultimediaREADME/Paso1/CapturaHolaMundo.png)
 
-En la parte superior de la pantalla aparece el boton _Deploy_ y un botón de opciones. Estos [botones](https://docs.streamlit.io/develop/concepts/architecture/app-chrome) son creados automaticamente por Streamlit y tienen funcionalidades más avanzadas que no se van a cubrir en este taller.
+En la parte superior derecha de la pantalla aparece el boton _Deploy_ y un botón de opciones. Estos [botones](https://docs.streamlit.io/develop/concepts/architecture/app-chrome) son creados automaticamente por Streamlit y tienen funcionalidades más avanzadas que no se van a cubrir en este taller.
 
-Con estos pasos se ha creado un Hola Mundo en Streamlit.
+Con estos simples pasos se ha creado una primera aplicación de Streamlit, la cual muestra en pantalla el mensaje "Hola Mundo".
 
-## Paso 2: Crear una aplicación para saludar con un boton.
+## Sección 2: Crear una aplicación que muestre un saludo al oprimir un boton.
 
 ### Paso 2.1: Agregar un boton a la aplicación.
 
 Para agregar un boton a la aplicación se debe usar el elemento [st.button()](https://docs.streamlit.io/develop/api-reference/widgets/st.button). Este elemento permite dibujar un botón en la pantalla y cada vez que dicho boton sea oprimido la función st.button() retornará el valor True.
 
-Para incluir en la aplicación un botón que muestre el mensaje _Hola Mundo_ al ser presionado se debe modificar el código del archivo _hola_mundo.py_ de la siguiente forma:
+Para que en la aplicación se incluya un botón que muestre el mensaje _Hola Mundo_ al ser presionado se debe modificar el código del archivo _hola_mundo.py_ para que quede de la siguiente manera:
 
 ```python
 import streamlit as st
@@ -142,9 +150,9 @@ if boton_saludar:
     st.write("Hola Mundo")
 ```
 
-En esta modificación se ha incluido un st.button. El primer argumento del st.button es el texto que se quiere mostrar sobre el botón.
+En esta modificación se ha incluido un st.button al código. El primer argumento del st.button es la etiqueta que se quiere que tenga el boton cuando se dibuje en pantalla.
 
-El botón creado se ha asignado a la variable _boton_saludar_. La variable _boton_saludar_ tomará el valor True cuando el botón sea presionado por el usuario, y cuando esto pase se ejecutará el código dentro de la sentencia _if_, lo cual hará que se escriba el mensaje _Hola Mundo_ en la pantalla.
+El botón creado se asigna a la variable _boton_saludar_. La variable _boton_saludar_ tomará el valor True cuando el botón sea presionado por el usuario, y cuando esto pase se ejecutará el código dentro de la sentencia _if_, lo cual hará que se escriba el mensaje _Hola Mundo_ en la pantalla.
 
 Una vez se han guardado estos cambios en el archivo _hola_mundo.py_ se puede ir nuevamente a la dirección http://localhost:8501 en el navegador.
 
@@ -154,19 +162,19 @@ Para que el navegador vuelva a ejecutar la aplicación y refleje los ultimos cam
 
 1. Oprimir la tecla R dentro del navegador.
 
-2. Ubicar el cursor sobre el logo _i_ que aparece en la esquina superior derecha de la pantalla y luego dar click al boton _Rerun_:
+2. Ubicar el cursor sobre el logo _i_ que aparece en la esquina superior derecha de la pantalla y luego dar click al boton _Rerun_ como se muestra en el siguiente video:
 
 https://github.com/user-attachments/assets/3c6c8a82-aa81-4837-b97a-b40cf16dea6d
 
-Tras esto, en el navegador se ven los ultimos cambios realizados en la aplicación y ahora aparece el botón _Saludar_ en la pantalla. Cuando se oprime el boton se muestra el mensaje _Hola Mundo_:
+Tras esto, en el navegador se debe ver la aplicación con los ultimos cambios realizados en la aplicación. Es decir, en la pantalla ahora debe aparecer un botón con la etiqueta _Saludar_. Cuando se oprime el boton se debe mostrar el mensaje _Hola Mundo_:
 
 https://github.com/user-attachments/assets/79f6f154-012d-4daa-966b-42e6cb7f01a1
 
-### Paso 2.2: Agregar un campo de texto para escribir un nombre
+### Paso 2.2: Agregar un campo de texto para que el usuario pueda escribir su nombre
 
-Ahora vamos a modificar el código de la aplicación para que se pueda recibir el nombre del usuario y se puede escribir un mensaje saludandolo tras oprimir un boton.
+Ahora se va a modificar el código de la aplicación para que se dibuje un campo de texto donde el usuario pueda escribir su nombre. Luego se hará que cuando se oprima el boton _Saludar_ se muestre un salud con el nombre que ingresó el usuario.
 
-Para esto debemos modificar el código dentro del archivo _hola_mundo.py_ para que se vea de la siguiente manera:
+Para esto debemos modificar el código del archivo _hola_mundo.py_ para que se vea de la siguiente manera:
 
 ```python
 import streamlit as st
@@ -180,17 +188,17 @@ if boton_saludar:
     st.write(f"Hola {nombre_usuario}")
 ```
 
-En este caso se ha agregado un elemento de tipo [st.text_input()](https://docs.streamlit.io/develop/api-reference/widgets/st.text_input) al inicio de la aplicación. Este elemento dibuja una caja de texto donde el usuario puede escribir. El primer argumento del st.text_input() corresponde al mensaje que se quiere mostrar en pantalla sobre la caja de texto.
+En este caso se ha agregado un elemento de tipo [st.text_input()](https://docs.streamlit.io/develop/api-reference/widgets/st.text_input) al inicio de la aplicación. Este elemento dibuja en la pantalla una caja de texto en la cual el usuario puede escribir. El primer argumento del st.text_input() corresponde al mensaje que se quiere mostrar en pantalla sobre la caja de texto.
 
-La variable _nombre_usuario_ va a almacenar el texto que se escriba en la caja de texto dibujada por el elemento st.text_input. 
+La variable _nombre_usuario_ va a almacenar el texto que el usuario escriba en la caja de texto dibujada por el elemento st.text_input. 
 
-Por otra parte, ahora el mensaje que se escribe en pantalla con st.write va a incluir el _nombre_usuario_ que se haya escrito en la caja de texto.
+Por otra parte, ahora el mensaje que se escribe en pantalla con el elemento st.write va a incluir el _nombre_usuario_ que este escrito en la caja de texto.
 
-Para visualizar todos estos elementos se deben guardar los cambios del archivo _hola_mundo.py_ y se debe ir al navegador. Tras dar click al boton _Rerun_ se deberia ver la siguiente interfaz:
+Para ver estos cambios reflejados en la aplicación se deben guardar los cambios realizados en el archivo _hola_mundo.py_ y se debe ir al navegador. Se deberia ver la siguiente interfaz tras dar click al boton _Rerun_ que aparece en la parte superior derecha de la pantalla:
 
 https://github.com/user-attachments/assets/29ec2a30-f612-4afc-81c9-de6cd1d7dc32
 
-Esta interfaz contiene los elementos que se mencionaron anteriormente y permite mostrar un saludo al usuario al oprimir el boton _Saludar_.
+Con estas lineas de código se pudo crear rápidamente una aplicación que permite mostrar un saludo personalizado al usuario cuando este oprime el boton _Saludar_.
 
 ### Paso 2.3: Detener la aplicación
 
@@ -198,7 +206,7 @@ Para detener la aplicación de Streamlit se debe ir a la terminal donde se esta 
 
 **Es importante que durante este proceso no se cierre la ventana del navegador** donde se estaba viendo la aplicación, ya que si la ventana del navegador se encuentra cerrada, la aplicación no se va a detener con CTRL+C.
 
-Video ejemplo sobre cómo se ve la terminal tras detener la aplicación exitosamente:
+A continuación hay un video de ejemplo sobre cómo se debe ver la terminal tras detener la aplicación exitosamente:
 
 https://github.com/user-attachments/assets/a8eb70fa-b605-44ea-8723-e643f17196ef
 
@@ -206,34 +214,46 @@ https://github.com/user-attachments/assets/a8eb70fa-b605-44ea-8723-e643f17196ef
 
 En esta sección se pudo ver que por medio de los elementos que ofrece Streamlit se pudo crear una aplicación que puede recibir el nombre de un usuario y saludarlo con tan solo 9 lineas de código.
 
-Streamlit acelera mucho el desarrollo de aplicaciones web debido a que permite incluir facilmente elementos en la interfaz simplemente llamando sus funciones dentro del código Python. 
+Streamlit acelera mucho el desarrollo de aplicaciones web debido a que permite crear facilmente elementos en la interfaz de la aplicación. Para crear un elemento uen la pantalla de la aplicación unicamente es necesario incluir alguno de sus elementos dentro del código Python. 
 
-Cabe resaltar que Streamlit tiene una amplia [biblioteca de elementos](https://docs.streamlit.io/develop/api-reference) que se pueden utilizar para mostrar diversos tipos de textos o graficas. Tambien tiene varios elementos para recibir distintos tipos de inputs.
+Cabe resaltar que Streamlit tiene una amplia [biblioteca de elementos](https://docs.streamlit.io/develop/api-reference) que se pueden utilizar para mostrar diversos tipos de textos o graficas. Tambien tiene elementos para recibir distintos tipos de inputs.
 
-La idea de esta primera parte del taller era familiarizarse con la forma en que se suelen llamar los elementos de Streamlit y cómo estos se ven reflejados en la interfaz grafica.
+La idea de estas dos primeras secciones del taller era familiarizarse con la forma en que se pueden construir aplicaciones simples utilizando el framework Streamlit.
 
+Tambien se buscaba: 
+- Mostrar cómo se utilizan algunos elementos de Streamlit y cómo estos se ven reflejados en la interfaz grafica.
 
-## Paso 3: Crear un Mini Prompt Lab
+- Mostrar cómo se puede ejecutar y detener una aplicación creada con Streamlit.
+
+- Evidenciar que no es necesario detener la aplicación para ver reflejados los cambios realizados en ella, unicamente se deben guardar los cambios y recargar la interfaz grafica para que refleje los ultimos cambios realizados en el código fuente de la aplicación.
+
+En las siguientes secciones del taller se construiran otras aplicaciones un poco más complejas utilizando Streamlit.
+
+## Sección 3: Crear un Mini Prompt Lab en Streamlit
 
 En esta sección del taller se busca crear una versión reducida de la sección Freeform del Prompt Lab de WatsonX que se vio en la sesión teorica del jueves.
 
+El Prompt Lab tenia la siguiente interfaz:
+
 ![FotoPromptLab](./MultimediaREADME/Paso3/PantallazoInicioPromptLab.png)
 
-Dentro de esta aplicación se podrá llamar a un modelo generativo alojado en la plataforma WatsonX utilizando los parametros que prefiera el usuario.
+Dentro de la aplicación que se va a construir se podrá llamar a un modelo generativo alojado en la plataforma WatsonX utilizando los parametros de inferencia que ingrese el usuario.
 
-### Paso 3.1: Eliminar el archivo _hola_mundo.py_
+### Paso 3.1: Eliminar el archivo _hola_mundo.py_ de la carpeta del proyecto.
 
-### Paso 3.2: Crear un nuevo archivo llamado _mini_prompt_lab.py_.
+### Paso 3.2: Crear un nuevo archivo llamado _mini_prompt_lab.py_ dentro de la carpeta del proyecto.
 
 Tras realizar estos cambios, la carpeta del proyecto deberia verse de la siguiente forma.
 
 ![FotoSoloMiniPromptLab](./MultimediaREADME/Paso3/SoloMiniPromptLab.png)
 
-### Paso 3.3: Agregar un titulo a la aplicación.
+Dentro del archivo _mini_prompt_lab.py_ se van a escribir todas las instrucciones para esta nueva aplicación.
+
+### Paso 3.3: Agregar un titulo en la interfaz de la aplicación.
 
 En Streamlit se puede usar el elemento [st.title()](https://docs.streamlit.io/develop/api-reference/text/st.title) para mostrar un texto con formato de titulo dentro de la aplicación.
 
-Para incluir un titulo en el Mini Prompt Lab se debe escribir el siguiente código en el archivo _mini_prompt_lab.py_
+Para incluir un titulo en el Mini Prompt Lab se debe escribir el siguiente código en el archivo _mini_prompt_lab.py_:
 
 ```python
 import streamlit as st
@@ -241,7 +261,7 @@ import streamlit as st
 st.title("Mini Prompt Lab")
 ```
 
-Para ejecutar la aplicación se debe ejecutar el siguiente comando en la terminal.
+Tras escribir el código, se guarda el archivo y se usa el siguiente comando para ejecutar la aplicación.
 
 ```console
 streamlit run mini_prompt_lab.py
@@ -251,11 +271,11 @@ Tras ejecutar la aplicación en el navegador deberia verse lo siguiente.
 
 ![FotoSoloTituloApp](./MultimediaREADME/Paso3/SoloTituloApp.png)
 
-### Paso 3.4: Agregar un menu para elegir el modelo.
+### Paso 3.4: Agregar un menu para que el usuario pueda elegir el modelo.
 
-Para agrear un menu en el cual se pueda elegir uno de los modelos disponibles en WatsonX se puede utilizar un elemento [st.selectbox()](https://docs.streamlit.io/develop/api-reference/widgets/st.selectbox). Este elemento crea un menu tipo dropdown en el cual se puede elegir entre una lista de opciones.
+Para agrear un menu en el cual se pueda elegir uno de los modelos disponibles en WatsonX se puede utilizar un elemento [st.selectbox()](https://docs.streamlit.io/develop/api-reference/widgets/st.selectbox). Este elemento crea un menu tipo desplegable en el cual el usuario se puede elegir una opción entre una lista. En este caso, podrá elegir un modelo entre varias opciones.
 
-Para incluir este menu en la aplicación se debe modificar el código en _mini_prompt_lab.py_ de la siguiente manera:
+Para incluir este menu en la aplicación se debe modificar el código escrito en _mini_prompt_lab.py_, el cual debe quedar se la siguiente manera:
 
 ```python
 import streamlit as st
@@ -265,19 +285,19 @@ st.title("Mini Prompt Lab")
 modelo_seleccionado = st.selectbox("Elige el modelo que quieres utilizar", ["ibm/granite-3-2-8b-instruct","mistralai/mistral-large", "meta-llama/llama-3-3-70b-instruct", "meta-llama/llama-4-scout-17b-16e-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"])
 ```
 
-La variable _modelo_seleccionado_ va a almacenar el modelo que elija el usuario desde la interfaz grafica. En este caso en el st.selectbox se incluyen 5 modelos a elegir para el usuario (Granite 3.2 8b, Mistral Large, Llama 3.3 70b, Llama 4 Scout, Llama 4 Maverick).
+La variable _modelo_seleccionado_ va a almacenar el modelo que el usuario elija en el menu que se crea en la interfaz grafica. En este caso en el st.selectbox se incluye una lista que indica cuales son los 5 modelos que el usuario puede elegir (Granite 3.2 8b, Mistral Large, Llama 3.3 70b, Llama 4 Scout, Llama 4 Maverick).
 
-Si se ingresa nuevamente a la aplicación en el navegador, ahora debe haber un menu donde se puede elegir el modelo:
+Si se ingresa nuevamente al navegador, ahora debe haber un menu donde el usuario puede elegir el modelo:
 
 ![MenuCreado](./MultimediaREADME/Paso3/MenuCreado.png)
 
-### Paso 3.5: Agregar espacios para indicar la cantidad mínima y máxima de tokens de respuesta.
+### Paso 3.5: Agregar campos númericos para que el usuario pueda indicar la cantidad mínima y máxima de tokens de respuesta.
 
-Streamlit permite al usuario ingresar números por medio del elemento [st.number_input()](https://docs.streamlit.io/develop/api-reference/widgets/st.number_input).
+Para crear campos de texto en donde el usuario unicamente puede ingresar números desde la interfaz grafica se debe usar el elemento [st.number_input()](https://docs.streamlit.io/develop/api-reference/widgets/st.number_input).
 
-Para que el usuario un st.number_input() para que el usuario pueda indicar la cantidad mínima de tokens y otro para que pueda indicar la cantiadad máxima de tokens que espera de respuesta. 
+Se van a agregar dos st.number_input() al código de la aplicación, uno para que el usuario pueda indicar la cantidad mínima de tokens de respues que espera y otro para que pueda indicar la cantidad máxima de tokens. 
 
-Para esto se debe modificar el código escrito en _mini_prompt_lab.py_ de la siguiente forma.
+Para incluir estos elementos se debe modificar el código escrito en el archivo _mini_prompt_lab.py_ para que quede de la siguiente forma:
 
 ```python
 import streamlit as st
@@ -291,6 +311,8 @@ min_tokens_seleccionados = st.number_input("Tokens de respuesta mínimos", min_v
 max_tokens_seleccionados = st.number_input("Tokens de respuesta máximos", min_value=0, value=200)
 ```
 
+En este caso se agregaron dos lineas al final, una para el st.input encargado de recibir los tokens minimos que espera el usuario, y otro para recibir los tokens maximos.
+
 Las variables _min_tokens_seleccionados_ y _max_tokens_seleccionados_ almacenarán el número que ingrese el usuario en sus respectivos st.number_input().
 
 Tras estos cambios, la aplicación en el navegador debe verse de la siguiente forma:
@@ -299,7 +321,7 @@ Tras estos cambios, la aplicación en el navegador debe verse de la siguiente fo
 
 ### Paso 3.6: Agregar un menu para seleccionar el modo de decodificación
 
-Para que en la aplicación el usuario peuda seleccionar entre utilizar el modo de decodificación "Greedy" o "Sampling" se puede utilizar un menu del tipo [st.radio()](https://docs.streamlit.io/develop/api-reference/widgets/st.radio). Este menu permite al usuario elegir una entre varias opciones.
+Para que en la aplicación el usuario pueda seleccionar entre utilizar el modo de decodificación "Greedy" o "Sampling" se puede utilizar un menu del tipo [st.radio()](https://docs.streamlit.io/develop/api-reference/widgets/st.radio). Este menu permite al usuario elegir una entre varias opciones.
 
 El código en el archivo _mini_prompt_lab.py_ se debe modificar de la siguiente manera para incluir un menu que permita seleccionar el modo de decodificación:
 
@@ -327,7 +349,7 @@ Cuando se selecciona el modo Sampling en el Prompt Lab se permite al usuario con
 
 ![MenuPromptLabSampling](./MultimediaREADME/Paso3/MenuPromptLabSampling.png)
 
-En la aplicación se van a agregar elementos del tipo [st.slider()](https://docs.streamlit.io/develop/api-reference/widgets/st.slider) para que el usuario pueda seleccionar la temperatura, top p  y top k cuando tenga seleccionado el modo "Sampling". Además se va a agregar un st.number_input() para que indique la random seed a utilizar.
+En la aplicación se van a agregar elementos del tipo [st.slider()](https://docs.streamlit.io/develop/api-reference/widgets/st.slider) para que el usuario pueda seleccionar la temperatura, top p y top k cuando tenga seleccionado el modo "Sampling". Además se va a agregar un st.number_input() para que el usuario pueda indicar la random seed a utilizar en caso de que quiera utilizar alguna.
 
 Para incluir esta lógica en la aplicación, se debe modificar el archivo _mini_prompt_lab.py_ para que quede de la siguiente forma:
 
@@ -348,10 +370,12 @@ if modo_seleccionado == "Sampling":
     temperature_seleccionada = st.slider("Temperature", min_value=0.00, max_value=2.00, value=0.7, step=0.01)
     top_p_seleccionado = st.slider("Top P", min_value=0.01, max_value=1.00, value=1.00, step=0.01)
     top_n_seleccionado = st.slider("Top K", min_value=1, max_value=100, value=50, step=1)
-    random_seed_seleccionada = st.number_input("Random seed", min_value=1)
+    random_seed_seleccionada = st.number_input("Random seed", min_value=1, value=None)
 ```
 
-Los elementos de tipo st.slider() retornan el valor que el usuario haya seleccionado desde la interfaz.
+Las variables asignadas a los elementos de tipo st.slider() almacenan el valor que el usuario haya seleccionado utilizando el slider desde la interfaz.
+
+Por otra parte, el elemento st.number_input utilizado para que el usuario pueda ingresar la random seed tendrá por defecto el valor None, esto por si el usuario no quiere usar una random seed especifica.
 
 Tras guardar los cambios realizados, en el navegador al seleccionar la opción "Sampling" deberian salir los siguientes elementos:
 
@@ -359,7 +383,7 @@ Tras guardar los cambios realizados, en el navegador al seleccionar la opción "
 
 ### Paso 3.8: Agregar un slider para el parametro Repetition Penalty
 
-Al final del código se va a agregar otro st.slider() con el cual se pueda seleccionar el valor de repetition penalty tanto cuando se selecciona el modo "Greedy" cómo cuando se selecciona el modo "Sampling".
+Al final del código se va a agregar otro st.slider() el cual se va a encargar de dibujar otro slider donde el usuario pueda seleccionar el valor del parametro repetition penalty. Este slider va a aparecer tanto cuando se selecciona el modo de deodiciación "Greedy" cómo cuando se selecciona el modo "Sampling".
 
 Para ello se debe modificar el código de _mini_prompt_lab.py_ de la siguiente forma:
 
@@ -380,7 +404,7 @@ if modo_seleccionado == "Sampling":
     temperature_seleccionada = st.slider("Temperature", min_value=0.00, max_value=2.00, value=0.7, step=0.01)
     top_p_seleccionado = st.slider("Top P", min_value=0.01, max_value=1.00, value=1.00, step=0.01)
     top_n_seleccionado = st.slider("Top K", min_value=1, max_value=100, value=50, step=1)
-    random_seed_seleccionada = st.number_input("Random seed", min_value=1)
+    random_seed_seleccionada = st.number_input("Random seed", min_value=1, value=None)
 
 repetition_penalty_seleccionada = st.slider("Repetition Penalty", min_value=1.00, max_value=2.00, value=1.00, step=0.01)
 ```
@@ -391,7 +415,9 @@ Tras agregar este elemento, en la parte de abajo de la aplicación deberia salir
 
 ### Paso 3.9: Agregar un espacio para el prompt y un boton para llamar al modelo.
 
-Para agregar un espacio donde el usuario pueda escribir el prompt se va a utilizar un elemento del tipo [st.text_area()](https://docs.streamlit.io/develop/api-reference/widgets/st.text_area). Además, se va a agregar al final un botón con el cual llamar al modelo con el prompt y los parametros seleccionados.
+Para agregar un espacio donde el usuario pueda escribir el prompt se va a utilizar un elemento del tipo [st.text_area()](https://docs.streamlit.io/develop/api-reference/widgets/st.text_area). Este elemento se encarga de dibujar una caja de texto grande en la pantalla.
+
+Además de ello, se va a agregar al final del código un botón con el cual el usuario va a poder llamar al modelo con el prompt y los parametros seleccionados.
 
 Para esto se debe modificar el código del archivo _mini_prompt_lab.py_ para que quede de la siguiente forma:
 
@@ -412,7 +438,7 @@ if modo_seleccionado == "Sampling":
     temperature_seleccionada = st.slider("Temperature", min_value=0.00, max_value=2.00, value=0.7, step=0.01)
     top_p_seleccionado = st.slider("Top P", min_value=0.01, max_value=1.00, value=1.00, step=0.01)
     top_n_seleccionado = st.slider("Top K", min_value=1, max_value=100, value=50, step=1)
-    random_seed_seleccionada = st.number_input("Random seed", min_value=1)
+    random_seed_seleccionada = st.number_input("Random seed", min_value=1, value=None)
 
 repetition_penalty_seleccionada = st.slider("Repetition Penalty", min_value=1.00, max_value=2.00, value=1.00, step=0.01)
 
@@ -445,13 +471,13 @@ Luego se debe ejecutar este otro comando:
 pip install ibm-cloud-sdk-core==3.23.0
 ```
 
-Las librerias [ibm-watsonx-ai](https://ibm.github.io/watsonx-ai-python-sdk/) y [ibm-cloud-sdk-core](https://pypi.org/project/ibm-cloud-sdk-core/) permiten conectarse a diversos servicios ofrecidos por WatsonX facilmente.
+Las librerias [ibm-watsonx-ai](https://ibm.github.io/watsonx-ai-python-sdk/) y [ibm-cloud-sdk-core](https://pypi.org/project/ibm-cloud-sdk-core/) permiten conectarse a los diversos servicios ofrecidos por WatsonX.
 
 ### Paso 3.11: Instalar una liberia para leer variables de entorno
 
-Normalmente las credenciales para acceder a los modelos de IA Generativa se escriben en un archivo _.env_ y luego se leen desde la aplicación. Esto para evitar que las credenciales queden quemadas directamente en el código y puedan ser copiadas por otras personas.
+Normalmente las credenciales para acceder a los modelos de IA Generativa se escriben en un archivo aparte llamado _.env_ y no directamente en el código de la aplicación. Esto para evitar que mis credenciales sean expuestas publicamente cuando comparta el código de la aplicación y para que queden en un archivo independiente que sea facild e editar en caso de que mis credenciales hayan cambiado.
 
-Para poder leer variables almacenadas en un archivo _.env_ se debe instalar la libreria [python-dotenv](https://pypi.org/project/python-dotenv/) con el comando:
+Para que la aplicación pueda leer las variables almacenadas en el archivo _.env_ se debe instalar la libreria [python-dotenv](https://pypi.org/project/python-dotenv/) con el comando:
 
 ```console
 pip install python-dotenv==1.1.0
@@ -459,13 +485,15 @@ pip install python-dotenv==1.1.0
 
 ### Paso 3.12: Crear el archivo _.env_ para escribir las credenciales
 
-En la carpeta del proyecto se crea un archivo llamado _.env_
+En la carpeta del proyecto se debe crear un archivo llamado _.env_
 
-Se recomienda crear este archivo desde Visual Studio Code para evitar que quede con extensiones adicionales en el nombre, ya que es importante que unicamente se llame _.env_:
+Se recomienda crear este archivo desde Visual Studio Code para garantizar que su nombre sea unicamente _.env_ . Es posible que si se crea desde el explorador de archivos de windows, el archivo quede con otros nombres que no son adecuados. Es importante que el archivo unicamente se llame _.env_ .
+
+Tras crear el archivo, la carpeta del proyecto deberia verse de la siguiente manera en Visual Studio Code:
 
 ![ArchivoEnv](./MultimediaREADME/Paso3/CreadoArchivEnv.png)
 
-Dentro del archivo _.env_ se escribir las siguientes variables:
+Dentro del archivo _.env_ se deben escribir las siguientes variables:
 
 ```bat
 WATSONX_API_KEY = 
@@ -475,7 +503,7 @@ WATSONX_PROJECT_ID =
 
 A las variables WATSONX_API_KEY y WATSONX_PROJECT_ID se les debe asignar el Api Key y Project Id que le den los tutores el dia del taller.
 
-Una vez asignados esos valores, el archivo _.env_ deberia verse de forma similar al siguiente:
+Una vez asignados esos valores, el archivo _.env_ deberia verse de forma similar al siguiente, solo que los valores de las variables WATSONX_API_KEY y WATSONX_PROJECT_ID deben corresponder a la que le dieron el dia del taller:
 
 ![ArchivoEnvLleno](./MultimediaREADME/Paso3/EnvLleno.png)
 
@@ -483,11 +511,11 @@ Tras esto se puede guardar y cerrar el archivo _.env_.
 
 ### Paso 3.13: Crear un archivo con las funciones necesarias para llamar a WatsonX
 
-Dentro de la carpeta del proyecto se debe crear una carpeta llamada _utils_ y dentro de esta carpeta se debe crear un archivo llamado _watsonx_functions.py_. En el editor deberia verse de la siguiente manera:
+Dentro de la carpeta del proyecto se debe crear una carpeta llamada _utils_ y dentro de esta carpeta se debe crear un archivo llamado _watsonx_functions.py_. Tras hacer esto, en Visual Studio Code se deberia ver el proyecto de la siguiente manera:
 
 ![UtilsWatsonXFunctions](./MultimediaREADME/Paso3/UtilsWatsonFunctions.png)
 
-Dentro de este archivo se debe copiar el siguiente código, el cual trae dos funciones hechas para llamar los modelos en WatsonX:
+Dentro de este archivo se debe copiar el siguiente código, el cual trae dos funciones hechas para llamar los modelos alojados en WatsonX:
 
 ```python
 from ibm_watsonx_ai.foundation_models import ModelInference
@@ -520,7 +548,7 @@ def call_watsonx_text_model(
     temperatura: float = 0.7,
     top_p: float = 1.00,
     top_n: int = 50,
-    random_seed: int = 1):
+    random_seed: int = None):
 
     if modo == "Greedy":
         #Si el modo es greedy, le pasamos los siguientes parametros al modelo
@@ -532,7 +560,7 @@ def call_watsonx_text_model(
         }
 
     elif modo == "Sampling":
-        #Si el modo es sampling, le pasamos los siguientes parametros al modelo
+        #Si el modo es sampling, se le pasan los siguientes parametros al modelo
         parametros = {
             GenParams.DECODING_METHOD: "sample",
             GenParams.MIN_NEW_TOKENS: min_tokens,
@@ -540,9 +568,12 @@ def call_watsonx_text_model(
             GenParams.TEMPERATURE: temperatura,
             GenParams.TOP_P: top_p,
             GenParams.TOP_K: top_n,
-            GenParams.RANDOM_SEED: random_seed,
             GenParams.REPETITION_PENALTY: repetition_penalty
         }
+        #Si el usuario especifico una random seed (es decir el valor de random_seed es None), 
+        # esta random seed se incluye en el diccionario de parametros
+        if random_seed is not None:
+            parametros[GenParams.RANDOM_SEED] = random_seed
 
     #Se crea un objeto ModelInference con todos los datos proporcionados
     watsonx_model = ModelInference(model_id=id_modelo, params=parametros, credentials=creds, project_id=watsonx_project_id)
@@ -622,13 +653,13 @@ def call_watsonx_vision_model(
 En el código hay dos funciones:
 - La funcion _call_watsonx_text_model()_ permite llamar a los modelos capaces de procesar texto. Esta función recibe el prompt que se quiere realizar y todos los parametros con los que se quiere llamar el modelo alojado en la plataforma WatsonX. Dependiendo de si seleccionamos el modo “Greedy”, o “Sampling”, se envian algunos parametros o no. La función retorna unicamente el texto generado por el modelo.
 
-- La funcion _call_watsonx_vision_model()_ permite llamar a los modelos multimodales capaces de recibir imagenes y texto para generar una respuesta. Esta función recibe el prompt que se quiere realizar, la imagen que se quiere adjuntar y algunos parametros con los que llamar el modelo alojado en la plataforma WatsonX. La función retorna unicamente el texto generado por el modelo.
+- La funcion _call_watsonx_vision_model()_ permite llamar a los modelos multimodales capaces de recibir imagenes y texto para generar una respuesta. Esta función recibe el prompt que se quiere realizar, la imagen que se quiere adjuntar y algunos parametros adicionales con los que llamar el modelo alojado en la plataforma WatsonX (El modelo que quiero usar y la cantidad máxima de tokens de respuesta). La función retorna unicamente el texto generado por el modelo.
 
-Una vez se ha escrito el código en el archivo _watsonx_functions.py_ se puede cerrar y guardar el archivo.
+Una vez se ha escrito el código en el archivo _watsonx_functions.py_ se puede guardar y cerrar el archivo.
 
 ### Paso 3.14: Importar la funcion _call_watsonx_text_model_ dentro del archivo _mini_prompt_lab.py_
 
-Para importar la función se debe incluir esta sentencia al inicio del código:
+Para importar la función se debe incluir esta sentencia al inicio del código escrito en el archivo _mini_prompt_lab_.py:
 
 ```python
 from utils.watsonx_functions import call_watsonx_text_model
@@ -636,9 +667,9 @@ from utils.watsonx_functions import call_watsonx_text_model
 
 ### Paso 3.15: Incluir la lógica para llamar a un modelo en _mini_prompt_lab.py_
 
-Al final del archivo _mini_prompt_lab.py_ se debe incluir la lógica para que cuando se oprima el botón "Llamar al modelo", se llamé la función _call_watsonx_text_model()_ con los parametros que ha ido definiendo el usuario en la aplicación.
+Al final del archivo _mini_prompt_lab.py_ se debe incluir la lógica para que cuando se oprima el botón que dice "Llamar al modelo", se llamé la función _call_watsonx_text_model()_ con los parametros que el usuario indicó en la aplicación.
 
-Para esto se debe modificar el código del archivo _mini_prompt_lab.py_ para que quede de la siguiente manera:
+Para esto se debe modificar el código del archivo _mini_prompt_lab.py_ el cual debe quedar se la siguiente forma:
 
 ```python
 import streamlit as st
@@ -658,7 +689,7 @@ if modo_seleccionado == "Sampling":
     temperature_seleccionada = st.slider("Temperature", min_value=0.00, max_value=2.00, value=0.7, step=0.01)
     top_p_seleccionado = st.slider("Top P", min_value=0.01, max_value=1.00, value=1.00, step=0.01)
     top_n_seleccionado = st.slider("Top K", min_value=1, max_value=100, value=50, step=1)
-    random_seed_seleccionada = st.number_input("Random seed", min_value=1)
+    random_seed_seleccionada = st.number_input("Random seed", min_value=1, value=None)
 
 repetition_penalty_seleccionada = st.slider("Repetition Penalty", min_value=1.00, max_value=2.00, value=1.00, step=0.01)
 
@@ -687,31 +718,34 @@ if boton_llamar_modelo:
             repetition_penalty=repetition_penalty_seleccionada,
             temperatura=temperature_seleccionada,
             top_p=top_p_seleccionado,
-            top_n=top_n_seleccionado
+            top_n=top_n_seleccionado,
+            random_seed=random_seed_seleccionada
         )
     
     with st.expander("Respuesta Generada ", expanded=True):
         st.write(respuesta_generada)
 ```
 
-La lógica adicional agregada al final del código permite que cuando se oprima el boton, se verifique si el usuario seleccionó el modo Greedy o Sampling y a partir de ello se llama a la función _call_watsonx_text_model()_ con los paremetros necesarios para cada modo. 
+La lógica adicional agregada al final del código permite que cuando se oprima el boton, se verifique si el usuario seleccionó el modo Greedy o Sampling y a partir de ello se llama a la función _call_watsonx_text_model()_ con los paremetros necesarios para modo de decodificación. 
 
-Una vez se genera la respuesta, esta se muestra dentro de un contenedor de tipo [st.expander()](https://docs.streamlit.io/develop/api-reference/layout/st.expander). Los contenedores en Streamlit permiten crear un espacio en donde se puden incluir otros elementos.
+Una vez se genera la respuesta, esta se muestra dentro de un contenedor de tipo [st.expander()](https://docs.streamlit.io/develop/api-reference/layout/st.expander). Los contenedores en Streamlit permiten crear cajas dentro de la pantalla en donde se puden dibujar otros elementos dentro de ellas.
 
-En este caso por medio de las instrucciones 
+En las instrucciones que estan al final del código las cuales dicen:
 
 ```python
     with st.expander("Respuesta Generada ", expanded=True):
         st.write(respuesta_generada)
 ```
 
-Se esta creando un contenedor de tipo st.expander, y dentro de este contenedor se esta escribiendo la respuesta generada. Las instrucciones que se ejecutan dentro de la sentencia _with_ se van a dibujar dentro del contenedor.
+Permiten crear un contenedor de tipo st.expander, y dentro de este contenedor se va a escribir la respuesta generada por el modelo. 
 
-Para tener una mayor claridad, se va a ejecutar la aplicación y se vera su funcionamiento.
+Cuando se escribe una sentencia _with_ en Streamlit, lo que se hace es que todo aquello que este dentro del bloque with se dibuje dentro del contendor, el cual en este caso es un st.expander.
+
+Para tener una mayor claridad de cómo se ve el contendor st.expander, se va a ejecutar la aplicación y se vera su funcionamiento.
 
 ### Paso 3.16: Ejecutar el Mini Prompt Lab
 
-Para ejecutar la aplicación se ejecuta el comando:
+Para ejecutar la aplicación, en la terminal se ejecuta el comando:
 
 ```console
 streamlit run mini_prompt_lab.py
@@ -721,17 +755,17 @@ Una vez se ejecuta, desde el navegador se puede utilizar la aplicación para rea
 
 https://github.com/user-attachments/assets/efe11826-e66c-48f5-8bbf-3fd670cb6179
 
-Aquí se puede observar con mayor claridad que cuando el modelo responde se dibuja un contenedor st.expander() y dentro de ese contenedor se escribe la respuesta generada.
+Aquí se puede observar con mayor claridad que cuando el modelo responde se dibuja un contenedor  (El cual corresponse al st.expander()) y dentro de ese contenedor se escribe la respuesta generada.
 
 ### Paso 3.17: Conclusion
 
-Con esto ya se ha creado un Mini Prompt Lab con el cual se pueden experimentar con varios modelos del lenguaje y sus parametros. Dentro de est aplicación se pudo utilizar más elementos de Streamlit y se realizo la conexión con WatsonX.
+Con esto ya se ha creado un Mini Prompt Lab con el cual se puede experimentar con varios modelos generativos y sus parametros de inferencia. Dentro de esta aplicación se pudo utilizar más elementos de Streamlit y se realizo la conexión con WatsonX.
 
-En la siguiente parte del taller se va a construir un Mini Prompt Lab pero que ahora utilice modelos multimodales para imagenes y texto.
+En la siguiente sección del taller se va a construir un Mini Prompt Lab pero que ahora utilice modelos multimodales para imagenes y texto.
 
-## Paso 4: Crear un Mini Prompt Lab para Modelos Multimodales
+## Sección 4: Crear un Mini Prompt Lab para Modelos Multimodales
 
-En esta parte del taller se va a crear una nueva aplicación que permite realizar preguntas a un modelo multimodal teniendo en cuenta una imagen que el usuario suba o tome con su cámara.
+En esta parte del taller se va a crear una nueva aplicación que permite realizar preguntas a un modelo multimodal que recibe un prompt y una imagen que el usuario suba o tome con su cámara.
 
 ### Paso 4.1: Detener la aplicación _mini_prompt_lab.py_ en caso de que se este ejecutando
 
