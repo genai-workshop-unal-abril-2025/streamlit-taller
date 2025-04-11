@@ -755,13 +755,15 @@ Una vez se ejecuta, desde el navegador se puede utilizar la aplicación para rea
 
 https://github.com/user-attachments/assets/4df52147-3e09-4b9e-96fe-d15521c94292
 
-Aquí se puede observar con mayor claridad que cuando el modelo responde se dibuja un contenedor  (El cual corresponse al st.expander()) y dentro de ese contenedor se escribe la respuesta generada.
+Aquí se puede observar con mayor claridad que cuando el modelo responde se dibuja un contenedor (El cual corresponse al st.expander()) y dentro de ese contenedor se escribe la respuesta generada.
+
+El contendor st.expander se caracteriza por poder expanderse o contraerse cuando se da click sobre el. En Streamlit hay otro tipo de contenedores, los cuales se pueden ver [aqui.](https://docs.streamlit.io/develop/api-reference/layout)
 
 ### Paso 3.17: Conclusion
 
-Con esto ya se ha creado un Mini Prompt Lab con el cual se puede experimentar con varios modelos generativos y sus parametros de inferencia. Dentro de esta aplicación se pudo utilizar más elementos de Streamlit y se realizo la conexión con WatsonX.
+Se ha creado un Mini Prompt Lab con el cual se puede experimentar con varios modelos generativos y sus parametros de inferencia. Dentro de esta aplicación se pudo utilizar más elementos de Streamlit y se realizo la conexión con WatsonX.
 
-En la siguiente sección del taller se va a construir un Mini Prompt Lab pero que ahora utilice modelos multimodales para imagenes y texto.
+En la siguiente sección del taller se va a construir un Mini Prompt Lab pero que utilice modelos multimodales capaced de recibir imagenes y texto.
 
 ## Sección 4: Crear un Mini Prompt Lab para Modelos Multimodales
 
@@ -769,13 +771,13 @@ En esta parte del taller se va a crear una nueva aplicación que permite realiza
 
 ### Paso 4.1: Detener la aplicación _mini_prompt_lab.py_ en caso de que se este ejecutando
 
-### Paso 4.2: Crear un nuevo archivo llamado _multimodal_prompt_lab.py_
+### Paso 4.2: Crear un nuevo archivo llamado _multimodal_prompt_lab.py_ en la carpeta del proyecto
 
 La carpeta del proyecto en este momento debe verse de la siguiente forma:
 
 ![CradoMultiModal](./MultimediaREADME/Paso4/ArchivoMultimodalPL.png)
 
-### Paso 4.3: Primera parte de la interfaz de la aplicación.
+### Paso 4.3: Crear la primera parte de la interfaz de la aplicación.
 
 Dentro del archivo multimodal_prompt_lab.py se deben escribir las siguientes lineas de código:
 
@@ -792,9 +794,9 @@ max_tokens_seleccionados = st.number_input("Tokens de respuesta máximos", min_v
 modo_subir_imagen = st.radio("Selecciona una opcion", ["Subir imagen desde mi dispositivo", "Tomar una foto con la cámara"])
 ```
 
-Estas lineas son similares a las usadas al inicio del Mini Prompt Lab. A partir de estas lineas se crea un titulo para la aplicación, un menu para seleccionar el modelo multimodal que se quiere usar y un espacio para escribir la maxima cantidad de tokens.
+Estas lineas son similares a las usadas al inicio del Mini Prompt Lab. A partir de estas lineas se crea un titulo para la aplicación, un menu para seleccionar el modelo multimodal y un espacio para escribir la maxima cantidad de tokens.
 
-Algo nuevo que se agrega en este caso es que se crea un menu en donde el usuario puede decidir si quiere subir una imagen o tomar una foto con su cámara para usarla en la aplicación.
+En la ultima linea se crea un menu en donde el usuario puede decidir si quiere subir una imagen o quiere tomar una foto con su cámara para usarla en la aplicación.
 
 En este momento se puede ejecutar la aplicación con el comando:
 
@@ -811,7 +813,7 @@ Tras ejecutar la aplicación, en el navegador deberian verse los siguientes elem
 Para que el usuario pueda subir una imagen podemos utilizar el elemento [st.file_uploader()](https://docs.streamlit.io/develop/api-reference/widgets/st.file_uploader). Este elemento crea una caja donde el usuario puede subir archivos. Por otra parte, una vez el usuario ha subido una imagen, podemos mostrarla en pantalla utilizando el elemento [st.image()](https://docs.streamlit.io/develop/api-reference/media/st.image).
 
 
-Para agregar que el usuario pueda subir una imagen y luego podamos ver la imagen subida dentro de un contendor st.expandeer() se debe modificar el código del archivo _multimodal_prompt_lab.py_ de la siguiente manera:
+Para que el usuario pueda subir una imagen y luego se pueda visualiziar la imagen subida dentro de un contendor st.expander() se debe modificar el código del archivo _multimodal_prompt_lab.py_ de la siguiente manera:
 
 ```python
 import streamlit as st 
@@ -838,9 +840,9 @@ Si se guardan los cambios y se va al navegador, en la parte de abajo de la panta
 
 ### Paso 4.5 Agregar la lógica para cuando el usuario queire Tomar una foto con su cámara.
 
-Si el usuario quiere que tomar la imagen con su cámara entonces se puede utilizar el elemento [st.camera_input()](https://docs.streamlit.io/develop/api-reference/widgets/st.camera_input). Este elemento cual permite capturar imagenes con la cámara del dispositivo. 
+Si el usuario quiere tomar la foto con su cámara entonces se puede utilizar el elemento [st.camera_input()](https://docs.streamlit.io/develop/api-reference/widgets/st.camera_input). Esta instrucción dibuja en la interfaz un elemento que permite capturar imagenes con la cámara del dispositivo. 
 
-Para que este elemento se muestre cuando el usuario quiere tomar una foto con su dispositivo se debe modificar el código del archiv _multimodal_prompt_lab.py_ de la siguiente forma:
+Para que este elemento se muestre cuando el usuario quiere tomar una foto con su dispositivo se debe modificar el código del archivo _multimodal_prompt_lab.py_ de la siguiente forma:
 
 ```python
 import streamlit as st 
@@ -864,13 +866,13 @@ elif modo_subir_imagen == "Tomar una foto con la cámara":
     imagen_subida = st.camera_input("Toma una foto")
 ```
 
-La variable imagen_subida contiene la imagen que subael usuario o que tome con su cámara.
+La variable imagen_subida contiene la imagen que suba el usuario o que tome con su cámara.
 
 Si se guardan los cambios y se va al navegador, cuando el usuario elija la opción "Tomar una foto con la cámara" debe aparecer un elemento que le permita tomarla:
 
 ![EjemploTomarFoto](./MultimediaREADME/Paso4/TomarFotoEjemplo.png)
 
-### Paso 4.6: Agregar un espacio para el prompt y un boton para llamar al modelo
+### Paso 4.6: Agregar un espacio para el prompt del usuario y un boton para llamar al modelo
 
 Para agregar estos elementos se debe mdoificar el código de _multimodal_prompt_lab.py_ de la siguiente manera:
 
@@ -910,24 +912,32 @@ if imagen_subida is not None:
             st.write(respuesta_generada)
 ```
 
-Las lineas incluidas al final se encargan de:
+Las nuevas lineas incluidas al final del código se encargan de:
 
 1. Verificar que exista una imagen
 2. Cuando hay una imagen subida, mostrar un st.text_area() donde el usuario puede escribir su prompt y mostrar un st.button() para llamar el modelo.
-3. Cuando el boton se oprime, se llama a la función _call_watsonx_vision_model_ con los parametros dados por el usuario. Esta función retorna el texto generado por el modelo
+3. Cuando el boton se oprime, se llama a la función _call_watsonx_vision_model_ con los parametros dados por el usuario. Esta función retorna el texto generado por el modelo multimodal.
 4. Finalmente, muestra la respuesta generada dentro de un contendor st.expander().
 
-Una vez se guardan estos cambios y se va al navegador se puede probar la aplicación completa:
+Una vez se guardan estos cambios y se va al navegador se puede probar la aplicación completa, la cual deberia verse de la siguiente manera:
 
 https://github.com/user-attachments/assets/9320319f-161e-4448-89e6-1d0242a1251a
 
 ### Paso 4.7: Conclusion
 
-Se ha construido una aplicación que permite llamar modelos multimodales alojados en WatsonX.
+En esta sección se construyo una aplicación que permite llamar modelos multimodales alojados en WatsonX para poder realizar consultas que incluyen textos e imagenes.
 
-## Paso 5: Crear una aplicación para interactuar con una base de datos vectorial ChromaDB
+## Sección 5: Crear una aplicación para interactuar con una base de datos vectorial hecha con ChromaDB
 
-[ChromaDB](https://www.trychroma.com/) es una base de datos vectorial con la que se puede interactuar facilmente dentro de Python. La idea en esta sección es crear una aplicación que permita subir, visualizar o eliminar documentos de la base de datos vectorial. 
+[ChromaDB](https://www.trychroma.com/) es una base de datos vectorial con la que se puede interactuar facilmente dentro de Python. 
+
+Las bases de datos vectoriales son bases de datos especiales que permiten almacenar un texto (En el caso de ChromaDB estos textos se llaman _documentos_) junto con su vector de embedding.
+
+Debido a esto, a las bases de datos vectoriales se les puede hacer una consulta con una frase y ellas pueden responder con los documentos cuyo vector de embedding tiene menor distancia al texto que se recibio en la consulta.
+
+Este tipo de bases de datos son muy utilizadas para realizar RAG. En este tutorial se utilizarán unicamente algunas funciones basicas que ofrecen este tipo de bases de datos, pero cabe resaltar que este tipo de bases de datos pueden ofrecer muchas más funcionalidades.
+
+La idea en esta sección es crear una aplicación que permita subir, visualizar o eliminar documentos de la base de datos vectorial. 
 
 La aplicación tambien tendrá una sección se podrá hacer una consulta a la base de datos para verificar cuales son los documentos guardados más cercanos a el texto ingresado en la consulta.
 
@@ -935,7 +945,7 @@ La aplicación tambien tendrá una sección se podrá hacer una consulta a la ba
 
 ### Paso 5.2: Instalar las dependencias necesarias para utilizar la base de datos vectorial ChromaDB.
 
-Para utilizar ChromaDB en la aplicación se requiere instalar 3 librerias, las cuales se pueden instalar ejecutando siguiente comando en una terminal que tenga el entorno virtual activado:
+Para utilizar ChromaDB en la aplicación se requiere instalar 3 librerias, las cuales se pueden instalar ejecutando el siguiente comando en la terminal que tiene el entorno virtual activado:
 
 ```console
 pip install chromadb==1.0.0 sentence-transformers==4.0.2 transformers==4.50.3
@@ -945,7 +955,7 @@ pip install chromadb==1.0.0 sentence-transformers==4.0.2 transformers==4.50.3
 
 La libreria _chromadb_ trae todo lo necesario para poder crear e interactuar con una base de datos vectorial de ChromaDB.
 
-Las librerias _sentence-transformers_ y _transformers_ permiten utilizar los modelos de embedding necesarios para crear los vectores  que se van a almacenar en la base de datos.
+Las librerias _sentence-transformers_ y _transformers_ permiten utilizar los modelos de embedding necesarios para crear los vectores que se van a almacenar en la base de datos.
 
 ### Paso 5.2: Crear un archivo con las funciones que permiten interactuar con ChromaDB
 
