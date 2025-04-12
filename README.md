@@ -1372,7 +1372,7 @@ En el ejemplo se ve que el LLM se basa principalmente en el documento (el cual f
 
 ## Paso 7: Unir todas las aplicaciones en una sola aplicación
 
-Streamlit permite crear aplicaciones que tengan [multiples pestañas](https://docs.streamlit.io/develop/concepts/multipage-apps) a partir de varios archivos Python. En esta sexxión se va a ver una forma de crear aplicaciones con multiples pestañas en streamlit.
+Streamlit permite crear aplicaciones que tengan [multiples pestañas](https://docs.streamlit.io/develop/concepts/multipage-apps) a partir de varios archivos Python. En esta sección se va a ver una forma de crear aplicaciones con multiples pestañas en Streamlit.
 
 Para ello se va a crear una nueva aplicación, en la cual cada una de las aplicaciones creadas a lo largo del tutorial van a ser pestañas dentro de la aplicación.
 
