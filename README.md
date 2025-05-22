@@ -166,7 +166,7 @@ Para que el navegador vuelva a ejecutar la aplicación y refleje los ultimos cam
 
 https://github.com/user-attachments/assets/3c6c8a82-aa81-4837-b97a-b40cf16dea6d
 
-Tras esto, en el navegador se debe ver la aplicación con los ultimos cambios realizados en la aplicación. Es decir, en la pantalla ahora debe aparecer un botón con la etiqueta _Saludar_. Cuando se oprime el boton se debe mostrar el mensaje _Hola Mundo_:
+Tras esto, en el navegador se debe ver la aplicación con los ultimos cambios realizados en el código. Es decir, en la pantalla ahora debe aparecer un botón con la etiqueta _Saludar_. Cuando se oprime el boton se debe mostrar el mensaje _Hola Mundo_:
 
 https://github.com/user-attachments/assets/79f6f154-012d-4daa-966b-42e6cb7f01a1
 
