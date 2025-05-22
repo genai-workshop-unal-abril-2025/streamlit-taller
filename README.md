@@ -110,7 +110,7 @@ import streamlit as st
 st.write("Hola Mundo")
 ```
 
-La primera linea del código se encarga de importar la libreria streamlit y permite utilizarla bajo el nombre _st_. La segunda linea utiliza el elemento [st.write()](https://link-url-here.org) de Streamlit. Este elemento permite mostrar texcto en la pantalla de la aplicación. En este caso el texto que va a mostrar es "Hola Mundo".
+La primera linea del código se encarga de importar la libreria streamlit y permite utilizarla bajo el nombre _st_. La segunda linea utiliza el elemento [st.write()](https://link-url-here.org) de Streamlit. Este elemento permite mostrar texto en la pantalla de la aplicación. En este caso el texto que va a mostrar es "Hola Mundo".
 
 Tras esto, se deben guardar los cambios realizado en el archivo _hola_mundo.py_
 
