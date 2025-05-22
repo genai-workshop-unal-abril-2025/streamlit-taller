@@ -78,7 +78,7 @@ Tras ejecutar el comando, en la parte izquierda de la terminal deberia verse el 
 
 ![Imagen entorno activado](./MultimediaREADME/Paso0/EntornoActivado.png)
 
-Al tener activar el entorno virtual en la consola, todos los paquetes que se instalen desde esa consola unicamente serán almacenados en la carpeta del entorno virtual, es decir en la carpeta _.venv_. Esto evita que los paquetes se instalen en todo el sistema, sino que unicamente queden aislados dentro de la carpeta _.venv_ .
+Al activar el entorno virtual en la consola, todos los paquetes que se instalen desde esa consola unicamente serán almacenados en la carpeta del entorno virtual, es decir en la carpeta _.venv_. Esto evita que los paquetes se instalen en todo el sistema, sino que unicamente queden aislados dentro de la carpeta _.venv_ .
 
 ### Paso 0.7: Instalar Streamlit en el entorno virtual
 
