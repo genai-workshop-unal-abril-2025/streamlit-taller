@@ -214,7 +214,7 @@ https://github.com/user-attachments/assets/a8eb70fa-b605-44ea-8723-e643f17196ef
 
 En esta sección se pudo ver que por medio de los elementos que ofrece Streamlit se pudo crear una aplicación que puede recibir el nombre de un usuario y saludarlo con tan solo 9 lineas de código.
 
-Streamlit acelera mucho el desarrollo de aplicaciones web debido a que permite crear facilmente elementos en la interfaz de la aplicación. Para crear un elemento uen la pantalla de la aplicación unicamente es necesario incluir alguno de sus elementos dentro del código Python. 
+Streamlit acelera mucho el desarrollo de aplicaciones web debido a que permite crear facilmente elementos en la interfaz de la aplicación. Para crear un elemento en la pantalla de la aplicación unicamente es necesario incluir alguno de sus elementos dentro del código Python. 
 
 Cabe resaltar que Streamlit tiene una amplia [biblioteca de elementos](https://docs.streamlit.io/develop/api-reference) que se pueden utilizar para mostrar diversos tipos de textos o graficas. Tambien tiene elementos para recibir distintos tipos de inputs.
 
