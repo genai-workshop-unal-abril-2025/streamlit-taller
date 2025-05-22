@@ -231,7 +231,7 @@ En las siguientes secciones del taller se construiran otras aplicaciones un poco
 
 ## Sección 3: Crear un Mini Prompt Lab en Streamlit
 
-En esta sección del taller se busca crear una versión reducida de la sección Freeform del Prompt Lab de WatsonX que se vio en la sesión teorica del jueves.
+En esta sección del taller se busca crear una versión reducida de la sección Freeform del Prompt Lab de WatsonX que se vio en la sesión teorica.
 
 El Prompt Lab tenia la siguiente interfaz:
 
