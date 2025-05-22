@@ -273,7 +273,7 @@ Tras ejecutar la aplicación en el navegador deberia verse lo siguiente.
 
 ### Paso 3.4: Agregar un menu para que el usuario pueda elegir el modelo.
 
-Para agrear un menu en el cual se pueda elegir uno de los modelos disponibles en WatsonX se puede utilizar un elemento [st.selectbox()](https://docs.streamlit.io/develop/api-reference/widgets/st.selectbox). Este elemento crea un menu tipo desplegable en el cual el usuario se puede elegir una opción entre una lista. En este caso, podrá elegir un modelo entre varias opciones.
+Para agregar un menu donde se pueda elegir uno de los modelos disponibles en WatsonX, se puede utilizar un elemento [st.selectbox()](https://docs.streamlit.io/develop/api-reference/widgets/st.selectbox). Este elemento crea un menu tipo desplegable en el cual el usuario se puede elegir una opción entre una lista de posibilidades. En este caso, podrá elegir un modelo entre varias opciones.
 
 Para incluir este menu en la aplicación se debe modificar el código escrito en _mini_prompt_lab.py_, el cual debe quedar se la siguiente manera:
 
